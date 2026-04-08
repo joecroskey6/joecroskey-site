@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;background:#000;color:#fff;user-select:none}
+html,body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;background:#000;color:#fff;user-select:none;touch-action:manipulation}
 
 /* =============================================
    CRT TV FRAME — wraps the entire experience
@@ -32,6 +32,14 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-
 /* Phosphor bloom glow */
 .crt-bloom{position:absolute;inset:0;z-index:9002;pointer-events:none;
   box-shadow:inset 0 0 120px rgba(100,200,255,0.04);border-radius:12px}
+/* Hide CRT overlays on mobile — they block touch scrolling */
+@media(max-width:600px){
+  #tv-screen::before,#tv-screen::after{display:none}
+  .crt-bloom{display:none}
+  #tv-frame{padding:0;border-radius:0;box-shadow:none;border:none}
+  #tv-bezel{padding:0;border-radius:0}
+  #tv-screen{inset:0;border-radius:0}
+}
 
 /* All content lives inside the CRT screen */
 #screen-content{position:absolute;inset:0;overflow:hidden;-webkit-overflow-scrolling:touch}
