@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Joe Croskey Channel</title>
+<link rel="icon" type="image/png" href="/joe.png">
+<meta name="description" content="Joseph Croskey — Designer, musician, producer, viral marketer at the bleeding edge of AI, web3, and creative culture.">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','system-ui','sans-serif']}}}}</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;background:#000;color:#fff;user-select:none}
+
+/* =============================================
+   CRT TV FRAME — wraps the entire experience
+   ============================================= */
+#tv-frame{position:fixed;inset:0;z-index:0}
+/* Outer bezel */
+#tv-bezel{position:absolute;inset:0;background:#111;border-radius:0}
+/* Screen area with CRT curvature */
+#tv-screen{position:absolute;inset:12px;border-radius:12px;overflow:hidden;background:#000;
+  box-shadow:inset 0 0 80px rgba(0,0,0,0.8),0 0 40px rgba(100,200,255,0.06)}
+/* CRT scanlines overlay */
+#tv-screen::before{content:'';position:absolute;inset:0;z-index:9000;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);
+  mix-blend-mode:multiply}
+/* CRT vignette */
+#tv-screen::after{content:'';position:absolute;inset:0;z-index:9001;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,0.3) 100%)}
+/* Phosphor bloom glow */
+.crt-bloom{position:absolute;inset:0;z-index:9002;pointer-events:none;
+  box-shadow:inset 0 0 120px rgba(100,200,255,0.04);border-radius:12px}
+
+/* All content lives inside the CRT screen */
+#screen-content{position:absolute;inset:0;overflow:hidden}
+
+/* =============================================
+   CUSTOM CURSOR — Wii Pointer Hand
+   ============================================= */
+.wii-cursor,
+.wii-cursor *{cursor:none!important}
+#pointer{position:fixed;z-index:20000;pointer-events:none;display:none;filter:drop-shadow(0 0 8px rgba(80,180,255,0.5))}
+#pointer svg{width:40px;height:48px;transition:transform 0.1s ease}
+#pointer.active svg{transform:scale(1.15) rotate(-5deg)}
+
+/* =============================================
+   BOOT SCREEN
+   ============================================= */
+#boot{position:absolute;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(170deg,#040e18 0%,#082840 35%,#0d5575 65%,#1a90c0 100%);
+  transition:opacity 0.5s ease,transform 0.5s ease}
+#boot.exit{opacity:0;transform:scale(1.1)}
+
+/* Boot bubbles */
+.bbub{position:absolute;border-radius:50%;
+  background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.18),rgba(255,255,255,0.02));
+  border:1px solid rgba(255,255,255,0.06);animation:brise linear infinite;will-change:transform;transform:translateZ(0)}
+@keyframes brise{0%{transform:translateY(110vh) scale(.4);opacity:0}8%{opacity:.8}92%{opacity:.6}100%{transform:translateY(-10vh) scale(1);opacity:0}}
+
+/* Light rays */
+.lray{position:absolute;bottom:0;width:1.5px;background:linear-gradient(to top,transparent,rgba(255,255,255,0.03),transparent);pointer-events:none}
+
+/* Orb */
+.orb{width:140px;height:140px;border-radius:50%;position:relative;
+  background:radial-gradient(circle at 38% 32%,#6dd5fa,#00b4d8 45%,#0077b6 85%);
+  box-shadow:0 0 50px rgba(0,180,216,0.35),0 0 100px rgba(0,180,216,0.15),inset 0 -15px 30px rgba(0,0,0,0.2),inset 0 8px 25px rgba(255,255,255,0.12);
+  animation:opulse 3s ease-in-out infinite;display:flex;align-items:center;justify-content:center}
+.orb::before{content:'';position:absolute;top:10%;left:18%;width:48%;height:32%;border-radius:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,0.45),transparent);filter:blur(3px)}
+.orb::after{content:'';position:absolute;bottom:15%;right:20%;width:20%;height:12%;border-radius:50%;
+  background:rgba(255,255,255,0.08);filter:blur(4px)}
+@keyframes opulse{0%,100%{box-shadow:0 0 50px rgba(0,180,216,0.35),0 0 100px rgba(0,180,216,0.15),inset 0 -15px 30px rgba(0,0,0,0.2),inset 0 8px 25px rgba(255,255,255,0.12)}
+50%{box-shadow:0 0 70px rgba(0,180,216,0.5),0 0 140px rgba(0,180,216,0.25),inset 0 -15px 30px rgba(0,0,0,0.2),inset 0 8px 25px rgba(255,255,255,0.18)}}
+
+.orb-txt{font-size:17px;font-weight:800;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,0.3);letter-spacing:-0.3px;position:relative;z-index:1;text-align:center;line-height:1.25}
+
+/* Press A button */
+.press-a{padding:14px 44px;border-radius:40px;font-size:15px;font-weight:600;letter-spacing:.5px;
+  background:linear-gradient(180deg,rgba(255,255,255,0.18),rgba(0,180,216,0.25) 50%,rgba(0,100,160,0.35));
+  border:1px solid rgba(255,255,255,0.2);color:#fff;cursor:pointer;
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  box-shadow:0 4px 24px rgba(0,180,216,0.2),inset 0 1px 0 rgba(255,255,255,0.25);
+  transition:all .25s ease;position:relative;overflow:hidden}
+.press-a::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,0.2),transparent);border-radius:40px 40px 0 0}
+.press-a:hover{background:linear-gradient(180deg,rgba(255,255,255,0.28),rgba(0,180,216,0.4) 50%,rgba(0,100,160,0.45));
+  box-shadow:0 8px 40px rgba(0,180,216,0.35),inset 0 1px 0 rgba(255,255,255,0.35);transform:translateY(-2px) scale(1.04)}
+.press-a:active{transform:scale(.97);transition-duration:.08s}
+
+/* White flash */
+#flash{position:absolute;inset:0;background:#fff;z-index:200;opacity:0;pointer-events:none}
+
+/* =============================================
+   MAIN MENU
+   ============================================= */
+#menu{position:absolute;inset:0;z-index:50;opacity:0;pointer-events:none;display:flex;flex-direction:column;
+  transition:opacity .7s ease}
+#menu.on{opacity:1;pointer-events:auto}
+
+/* Sky background */
+.sky{position:absolute;inset:0;
+  background:linear-gradient(175deg,#87ceeb 0%,#b3e5fc 18%,#e1f5fe 35%,#e8f8e8 52%,#d4f5d4 68%,#e1f5fe 85%,#a6d8f0 100%);
+  background-size:100% 200%;animation:skyShift 20s ease-in-out infinite alternate}
+@keyframes skyShift{0%{background-position:50% 0%}100%{background-position:50% 30%}}
+
+/* Clouds */
+.cloud{position:absolute;border-radius:50%;background:rgba(255,255,255,0.5);filter:blur(20px);pointer-events:none;z-index:1;will-change:transform}
+
+/* Floating menu bubbles */
+.mbub{position:absolute;border-radius:50%;pointer-events:none;z-index:2;
+  background:radial-gradient(circle at 30% 25%,rgba(255,255,255,0.5),rgba(255,255,255,0.08));
+  border:1px solid rgba(255,255,255,0.35);
+  box-shadow:inset 0 -4px 8px rgba(0,0,0,0.02),0 0 6px rgba(255,255,255,0.1);
+  animation:mfloat ease-in-out infinite;will-change:transform;transform:translateZ(0)}
+@keyframes mfloat{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-10px) rotate(2deg)}}
+
+/* Swimming fish */
+.fish{position:absolute;pointer-events:none;z-index:3;animation:fishSwim linear infinite;will-change:transform;transform:translateZ(0)}
+.fish svg{width:100%;height:100%}
+.fish.right svg{transform:scaleX(-1)}
+@keyframes fishSwim{
+  0%{transform:translateX(0) translateY(0)}
+  25%{transform:translateX(-30vw) translateY(-12px)}
+  50%{transform:translateX(-55vw) translateY(4px)}
+  75%{transform:translateX(-80vw) translateY(-8px)}
+  100%{transform:translateX(-110vw) translateY(0)}
+}
+@keyframes fishSwimR{
+  0%{transform:translateX(0) translateY(0)}
+  25%{transform:translateX(30vw) translateY(-10px)}
+  50%{transform:translateX(55vw) translateY(6px)}
+  75%{transform:translateX(80vw) translateY(-8px)}
+  100%{transform:translateX(110vw) translateY(0)}
+}
+.fish.boot-fish{opacity:.65}
+.fish.menu-fish{opacity:.55;z-index:12}
+/* Tail wiggle */
+.fish-body{animation:wiggle 1s ease-in-out infinite alternate;will-change:transform}
+@keyframes wiggle{0%{transform:rotate(-3deg)}100%{transform:rotate(3deg)}}
+
+/* =============================================
+   WII TOP BAR
+   ============================================= */
+@media(max-width:600px){.topbar{height:38px!important}}
+.topbar{height:44px;background:linear-gradient(180deg,rgba(230,240,250,0.9),rgba(200,220,240,0.85));
+  border-bottom:1px solid rgba(180,200,220,0.6);
+  box-shadow:0 2px 10px rgba(0,60,120,0.06);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:40;flex-shrink:0}
+.topbar-logo{display:flex;align-items:center;gap:8px}
+.topbar-orb{width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,#4fc3f7,#00b4d8 50%,#38b000);
+  box-shadow:0 2px 6px rgba(0,180,216,0.3),inset 0 1px 0 rgba(255,255,255,0.3);position:relative}
+.topbar-orb::before{content:'';position:absolute;top:3px;left:5px;width:12px;height:8px;border-radius:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,0.5),transparent)}
+.topbar-txt{font-size:13px;font-weight:700;color:#2a4a5a;letter-spacing:-.3px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-pill{font-size:11px;font-weight:500;color:#3a6a7a;padding:3px 10px;border-radius:12px;
+  background:linear-gradient(180deg,rgba(255,255,255,0.8),rgba(186,230,253,0.3));border:1px solid rgba(0,180,216,0.12)}
+/* Fake Wii icons */
+.wii-icon{width:18px;height:18px;opacity:0.4;display:flex;align-items:center;justify-content:center}
+.wii-icon svg{width:14px;height:14px}
+
+/* =============================================
+   CHANNEL GRID
+   ============================================= */
+.ch-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;padding:28px 32px;flex:1;overflow-y:auto;overflow-x:hidden;
+  position:relative;z-index:10;align-content:center}
+@media(max-width:600px){.ch-grid{gap:10px;padding:10px 14px;align-content:start}}
+
+/* Individual channel */
+@media(max-width:600px){.ch{padding:14px 12px 12px!important;gap:6px!important}
+  .ch-ico{width:60px!important;height:60px!important;border-radius:15px!important}
+  .ch-ico img{width:60px!important;height:60px!important;border-radius:15px!important}
+  .ch-ico svg{width:30px!important;height:30px!important}
+  .ch-name{font-size:13px!important}
+  .ch-sub{font-size:10px!important}}
+.ch{border-radius:18px;padding:28px 16px 20px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;
+  cursor:pointer;position:relative;transition:all .25s cubic-bezier(.2,0,.2,1);
+  background:linear-gradient(175deg,rgba(255,255,255,0.65) 0%,rgba(230,245,255,0.5) 50%,rgba(210,235,250,0.4) 100%);
+  border:1px solid rgba(255,255,255,0.7);
+  box-shadow:0 4px 20px rgba(0,80,140,0.06),0 1px 0 rgba(255,255,255,0.9) inset;
+  animation:chIn .6s ease both}
+
+/* Glossy highlight */
+.ch::before{content:'';position:absolute;top:0;left:0;right:0;height:55%;pointer-events:none;border-radius:16px 16px 0 0;
+  background:linear-gradient(180deg,rgba(255,255,255,0.5) 0%,rgba(255,255,255,0.1) 60%,transparent 100%);
+  transition:opacity .25s}
+
+/* Hover glow ring */
+.ch::after{content:'';position:absolute;inset:-3px;border-radius:19px;pointer-events:none;opacity:0;
+  border:2px solid rgba(0,180,216,0.4);box-shadow:0 0 20px rgba(0,180,216,0.15);transition:opacity .25s}
+
+.ch:hover{transform:translateY(-5px) scale(1.04);
+  background:linear-gradient(175deg,rgba(255,255,255,0.85),rgba(220,245,255,0.7) 50%,rgba(200,235,250,0.6));
+  box-shadow:0 12px 40px rgba(0,100,180,0.12),0 0 30px rgba(0,180,216,0.08),0 1px 0 rgba(255,255,255,1) inset}
+.ch:hover::after{opacity:1}
+.ch:active{transform:translateY(-1px) scale(.97);transition-duration:.08s}
+
+/* Staggered entrance */
+@keyframes chIn{from{opacity:0;transform:translateY(25px) scale(.92)}to{opacity:1;transform:none}}
+.ch:nth-child(1){animation-delay:.05s}.ch:nth-child(2){animation-delay:.12s}
+.ch:nth-child(3){animation-delay:.19s}.ch:nth-child(4){animation-delay:.26s}.ch:nth-child(5){animation-delay:.33s}.ch:nth-child(6){animation-delay:.40s}
+
+/* Channel icon */
+.ch-ico{width:84px;height:84px;border-radius:20px;display:flex;align-items:center;justify-content:center;
+  position:relative;box-shadow:0 4px 12px rgba(0,0,0,0.1),inset 0 1px 0 rgba(255,255,255,0.3);
+  animation:chBob 4s ease-in-out infinite}
+.ch-ico::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;border-radius:16px 16px 0 0;
+  background:linear-gradient(180deg,rgba(255,255,255,0.4),transparent);pointer-events:none}
+@keyframes chBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.ch:nth-child(odd) .ch-ico{animation-delay:.5s}
+.ch:nth-child(3n) .ch-ico{animation-delay:1s}
+
+/* Channel label */
+.ch-name{font-size:15px;font-weight:600;color:#1a3a4a;line-height:1.2}
+.ch-sub{font-size:11px;color:#6a9aaa;margin-top:2px}
+
+/* Sparkle for Easter Egg */
+.sparkle{position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;box-shadow:0 0 4px #fff;
+  animation:spk 2.5s ease-in-out infinite;pointer-events:none}
+@keyframes spk{0%,100%{opacity:0;transform:scale(0)}50%{opacity:1;transform:scale(1.2)}}
+
+/* Ripple */
+.rip{position:absolute;border-radius:50%;background:rgba(0,180,216,0.12);transform:scale(0);animation:ripA .5s ease-out;pointer-events:none}
+@keyframes ripA{to{transform:scale(4);opacity:0}}
+
+/* =============================================
+   WII BOTTOM BAR
+   ============================================= */
+.botbar{height:36px;background:linear-gradient(0deg,rgba(210,225,240,0.9),rgba(225,238,250,0.85));
+  border-top:1px solid rgba(180,200,220,0.5);display:flex;align-items:center;justify-content:center;gap:16px;
+  z-index:40;flex-shrink:0;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.home-btn{font-size:10px;font-weight:600;color:#3a6a7a;padding:4px 14px;border-radius:10px;cursor:pointer;
+  background:linear-gradient(180deg,#fff,#e0f0fa);border:1px solid rgba(0,120,180,0.12);
+  box-shadow:0 1px 4px rgba(0,60,120,0.06),inset 0 1px 0 rgba(255,255,255,0.9);transition:all .2s}
+.home-btn:hover{transform:scale(1.05);box-shadow:0 2px 8px rgba(0,120,180,0.1)}
+.mute-toggle{font-size:10px;color:#5a8a9a;cursor:pointer;padding:4px 10px;border-radius:8px;
+  background:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.5);transition:all .2s}
+.mute-toggle:hover{background:rgba(255,255,255,0.6)}
+
+/* =============================================
+   CHANNEL WINDOW (opened channel view)
+   ============================================= */
+#ch-window{position:absolute;inset:0;z-index:80;opacity:0;pointer-events:none;
+  display:flex;flex-direction:column;transition:opacity .4s ease}
+#ch-window.on{opacity:1;pointer-events:auto}
+/* Pause heavy background animations when a channel is open to reduce lag */
+.anim-paused .fish,.anim-paused .mbub,.anim-paused .cloud,.anim-paused .sparkle,.anim-paused .ch{animation-play-state:paused!important}
+.cw-topbar{height:40px;background:linear-gradient(180deg,rgba(230,242,255,0.95),rgba(210,228,245,0.9));
+  border-bottom:1px solid rgba(180,200,220,0.5);display:flex;align-items:center;padding:0 12px;gap:10px;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);flex-shrink:0;z-index:10}
+.cw-back{font-size:11px;font-weight:600;color:#2a5a6a;cursor:pointer;padding:4px 12px;border-radius:10px;
+  background:linear-gradient(180deg,#fff,#e0f0fa);border:1px solid rgba(0,120,180,0.1);
+  box-shadow:0 1px 3px rgba(0,60,120,0.05);transition:all .2s}
+.cw-back:hover{transform:scale(1.05)}
+.cw-title{font-size:12px;font-weight:700;color:#1a3a4a}
+.cw-body{flex:1;overflow-y:auto;position:relative;
+  background:linear-gradient(180deg,#e8f4fc,#f0faf0 50%,#e1f5fe);z-index:5;
+  will-change:scroll-position;-webkit-overflow-scrolling:touch}
+.cw-inner{max-width:780px;margin:0 auto;padding:28px 20px}
+
+/* Content cards inside channel windows */
+.gc{background:rgba(255,255,255,0.6);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.65);
+  border-radius:16px;padding:24px;box-shadow:0 4px 20px rgba(0,80,140,0.06),inset 0 1px 0 rgba(255,255,255,0.85);
+  position:relative;overflow:hidden}
+.gc::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,0.35),transparent);border-radius:16px 16px 0 0;pointer-events:none}
+
+/* Project cards */
+.pcard{background:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.6);border-radius:14px;padding:16px;
+  backdrop-filter:blur(8px);transition:all .25s;cursor:default}
+.pcard:hover{background:rgba(255,255,255,0.7);transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,100,180,0.08)}
+
+/* Tag pills */
+.tag{display:inline-block;padding:3px 10px;border-radius:16px;font-size:10px;font-weight:500;
+  background:linear-gradient(180deg,rgba(255,255,255,0.75),rgba(186,230,253,0.3));
+  border:1px solid rgba(0,180,216,0.12);color:#1a3a4a}
+
+/* Contact links */
+.clink{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;
+  background:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.5);transition:all .25s;text-decoration:none;color:#1a3a4a}
+.clink:hover{background:rgba(255,255,255,0.7);transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,100,180,0.08)}
+
+/* Fun Stuff popup menu */
+#fun-popup{position:absolute;inset:0;z-index:95;display:flex;align-items:center;justify-content:center;
+  background:rgba(0,10,20,0.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  opacity:0;pointer-events:none;transition:opacity .2s ease}
+#fun-popup.on{opacity:1;pointer-events:auto}
+.fp-card{background:rgba(8,22,38,0.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border:1px solid rgba(0,180,216,0.22);border-radius:20px;padding:8px;width:260px;
+  box-shadow:0 24px 64px rgba(0,0,0,0.55),0 0 0 1px rgba(0,180,216,0.08),inset 0 1px 0 rgba(255,255,255,0.06)}
+.fp-title{font-size:10px;color:rgba(79,195,247,0.6);text-transform:uppercase;letter-spacing:.1em;
+  font-weight:700;padding:8px 14px 6px}
+.fp-opt{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;
+  cursor:pointer;transition:background .15s;user-select:none}
+.fp-opt:hover{background:rgba(0,180,216,0.1)}
+.fp-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;
+  box-shadow:0 0 6px rgba(0,0,0,0.3)}
+.fp-info{}
+.fp-label{font-size:13px;font-weight:600;color:rgba(255,255,255,0.9);line-height:1.2}
+.fp-desc{font-size:10px;color:rgba(100,160,200,0.65);margin-top:1px}
+.fp-divider{height:1px;background:rgba(0,180,216,0.1);margin:4px 8px}
+
+/* Full-screen archive modal */
+#archive-frame{position:absolute;inset:0;z-index:90;opacity:0;pointer-events:none;display:flex;flex-direction:column;
+  transition:opacity .4s ease}
+#archive-frame.on{opacity:1;pointer-events:auto}
+
+/* =============================================
+   SCROLLBAR
+   ============================================= */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(0,140,200,0.2);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(0,140,200,0.35)}
+
+/* Boot element hide */
+.bhide{opacity:0}
+
+/* =============================================
+   JOE RADIO — Mini Playlist Widget
+   ============================================= */
+#joe-radio{position:fixed;bottom:16px;right:16px;z-index:15000;width:220px;
+  border-radius:16px;overflow:hidden;
+  background:linear-gradient(175deg,rgba(255,255,255,0.72),rgba(220,245,255,0.55) 50%,rgba(200,235,250,0.45));
+  border:1px solid rgba(255,255,255,0.7);
+  box-shadow:0 8px 32px rgba(0,80,140,0.12),0 0 20px rgba(0,180,216,0.06),inset 0 1px 0 rgba(255,255,255,0.9);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  transition:all .35s cubic-bezier(.2,0,.2,1);transform:translateY(0)}
+#joe-radio::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,0.45),transparent);border-radius:16px 16px 0 0;pointer-events:none}
+#joe-radio.collapsed{width:180px}
+#joe-radio.collapsed .radio-playlist{max-height:0;opacity:0;padding:0}
+
+.radio-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px 8px;cursor:pointer;position:relative;z-index:1}
+.radio-title{display:flex;align-items:center;gap:6px}
+.radio-orb{width:10px;height:10px;border-radius:50%;
+  background:linear-gradient(135deg,#4fc3f7,#f43f5e);
+  box-shadow:0 0 8px rgba(244,63,94,0.4);transition:box-shadow .3s}
+.radio-orb.playing{animation:rOrb 1.2s ease-in-out infinite}
+@keyframes rOrb{0%,100%{box-shadow:0 0 8px rgba(244,63,94,0.4)}50%{box-shadow:0 0 16px rgba(244,63,94,0.7),0 0 30px rgba(0,180,216,0.3)}}
+.radio-label{font-size:11px;font-weight:700;color:#1a3a4a;letter-spacing:-.2px}
+.radio-toggle{width:22px;height:22px;border-radius:8px;border:1px solid rgba(0,180,216,0.15);
+  background:linear-gradient(180deg,rgba(255,255,255,0.8),rgba(186,230,253,0.3));
+  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;
+  font-size:10px;color:#3a6a7a;line-height:1}
+.radio-toggle:hover{background:rgba(255,255,255,0.9);transform:scale(1.1)}
+
+.radio-now{padding:0 12px 8px;position:relative;z-index:1}
+.radio-track{font-size:10px;font-weight:600;color:#1a3a4a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.radio-artist{font-size:9px;color:#5a8a9a;margin-top:1px}
+
+.radio-controls{display:flex;align-items:center;justify-content:center;gap:10px;padding:0 12px 10px;position:relative;z-index:1}
+.radio-btn{width:28px;height:28px;border-radius:50%;border:1px solid rgba(0,180,216,0.12);
+  background:linear-gradient(180deg,rgba(255,255,255,0.8),rgba(186,230,253,0.25));
+  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;
+  box-shadow:0 2px 6px rgba(0,60,120,0.05)}
+.radio-btn:hover{transform:scale(1.1);box-shadow:0 4px 12px rgba(0,120,180,0.1)}
+.radio-btn.play{width:34px;height:34px;background:linear-gradient(180deg,#4fc3f7,#0077b6);border:none;
+  box-shadow:0 4px 14px rgba(0,120,180,0.25)}
+.radio-btn.play:hover{transform:scale(1.12);box-shadow:0 6px 20px rgba(0,120,180,0.35)}
+.radio-btn svg{width:12px;height:12px}
+.radio-btn.play svg{width:14px;height:14px;fill:#fff;stroke:#fff}
+
+.radio-playlist{max-height:200px;overflow-y:auto;padding:0 8px 8px;transition:all .35s ease;position:relative;z-index:1;
+  border-top:1px solid rgba(0,180,216,0.08)}
+.radio-playlist-item{display:flex;align-items:center;gap:8px;padding:6px 6px;border-radius:8px;cursor:pointer;
+  transition:all .2s}
+.radio-playlist-item:hover,.radio-playlist-item.active{background:rgba(0,180,216,0.08)}
+.radio-playlist-item.active .rpi-title{color:#0077b6;font-weight:600}
+.rpi-num{font-size:9px;color:#8ab;width:14px;text-align:right;flex-shrink:0}
+.rpi-title{font-size:10px;color:#2a4a5a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rpi-dur{font-size:9px;color:#8ab;flex-shrink:0;margin-left:auto}
+
+/* Visualizer bars */
+.radio-vis{display:flex;align-items:flex-end;gap:1.5px;height:14px;margin-left:auto;padding-right:4px}
+.radio-vis span{width:2.5px;border-radius:1px;background:linear-gradient(0deg,#4fc3f7,#0077b6);
+  animation:vbar .8s ease-in-out infinite alternate;opacity:0.5}
+.radio-vis.active span{opacity:1}
+.radio-vis span:nth-child(1){height:4px;animation-delay:0s}
+.radio-vis span:nth-child(2){height:8px;animation-delay:.15s}
+.radio-vis span:nth-child(3){height:5px;animation-delay:.3s}
+.radio-vis span:nth-child(4){height:11px;animation-delay:.1s}
+.radio-vis span:nth-child(5){height:6px;animation-delay:.25s}
+@keyframes vbar{0%{height:3px}100%{height:14px}}
+
+/* =============================================
+   LIGHTBOX GALLERY
+   ============================================= */
+#lightbox{position:fixed;inset:0;z-index:18000;background:rgba(0,0,0,0.92);opacity:0;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;transition:opacity .3s ease;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+#lightbox.on{opacity:1;pointer-events:auto}
+#lb-img{max-width:88vw;max-height:82vh;border-radius:10px;box-shadow:0 8px 60px rgba(0,0,0,0.5);
+  transition:transform .3s ease,opacity .25s ease;object-fit:contain}
+#lb-close{position:absolute;top:16px;right:20px;width:36px;height:36px;border-radius:50%;
+  background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:#fff;
+  font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;backdrop-filter:blur(8px)}
+#lb-close:hover{background:rgba(255,255,255,0.25);transform:scale(1.1)}
+.lb-arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;
+  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:#fff;
+  font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;backdrop-filter:blur(8px)}
+.lb-arrow:hover{background:rgba(255,255,255,0.2);transform:translateY(-50%) scale(1.1)}
+#lb-prev{left:16px}
+#lb-next{right:16px}
+#lb-counter{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+  font-size:12px;color:rgba(255,255,255,0.6);font-weight:500}
+
+/* Clickable gallery thumbnails */
+.proj-gallery{display:flex;gap:6px;overflow-x:auto;padding:4px 0;margin:8px 0}
+.proj-gallery img{height:90px;border-radius:8px;cursor:pointer;transition:all .2s;flex-shrink:0;
+  border:2px solid transparent;object-fit:cover}
+.proj-gallery img:hover{transform:scale(1.05);border-color:rgba(0,180,216,0.3);
+  box-shadow:0 4px 16px rgba(0,100,180,0.15)}
+
+/* Paper/essay styling */
+.paper-body{text-indent:2em;text-align:justify}
+.paper-body p{margin-bottom:1em}
+
+/* =============================================
+   ANIME EASTER EGGS
+   ============================================= */
+/* Floating sparkle particles */
+.anime-sparkle{position:fixed;pointer-events:none;z-index:14000;
+  width:6px;height:6px;animation:aSpark 3s ease-in-out forwards}
+.anime-sparkle::before,.anime-sparkle::after{content:'';position:absolute;background:#fff;border-radius:1px}
+.anime-sparkle::before{width:6px;height:1.5px;top:2.25px;left:0}
+.anime-sparkle::after{width:1.5px;height:6px;top:0;left:2.25px}
+@keyframes aSpark{0%{opacity:0;transform:scale(0) rotate(0deg)}15%{opacity:1;transform:scale(1.2) rotate(20deg)}
+40%{opacity:1;transform:scale(0.8) rotate(40deg) translateY(-20px)}
+100%{opacity:0;transform:scale(0) rotate(80deg) translateY(-60px)}}
+
+/* Shing! — anime lens flare on hover */
+.shing{position:absolute;top:50%;left:50%;width:120%;height:120%;pointer-events:none;z-index:5;
+  transform:translate(-50%,-50%);opacity:0;transition:opacity .15s}
+.ch:hover .shing{opacity:1}
+.shing-line{position:absolute;top:50%;left:50%;transform-origin:center;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.9) 40%,rgba(200,240,255,0.95) 50%,rgba(255,255,255,0.9) 60%,transparent);
+  height:1.5px;width:100%;border-radius:1px}
+.shing-line:nth-child(1){transform:translate(-50%,-50%) rotate(0deg)}
+.shing-line:nth-child(2){transform:translate(-50%,-50%) rotate(60deg)}
+.shing-line:nth-child(3){transform:translate(-50%,-50%) rotate(120deg)}
+.shing-flare{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:24px;height:24px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,0.9),rgba(200,240,255,0.4) 40%,transparent 70%);
+  box-shadow:0 0 20px rgba(200,240,255,0.5)}
+.shing-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,0.3);
+  opacity:0;transition:all .3s}
+.ch:hover .shing-ring{width:60px;height:60px;opacity:1}
+
+/* Speed lines burst (on click) */
+.speed-lines{position:fixed;top:50%;left:50%;z-index:14500;pointer-events:none}
+.speed-line{position:absolute;width:2px;background:linear-gradient(to bottom,rgba(255,255,255,0.8),transparent);
+  transform-origin:top center;animation:speedOut .4s ease-out forwards}
+@keyframes speedOut{0%{height:0;opacity:1}100%{height:80px;opacity:0}}
+
+/* =============================================
+   MOBILE ADJUSTMENTS
+   ============================================= */
+@media(max-width:600px){
+  #tv-screen{inset:6px;border-radius:8px}
+  .orb{width:110px;height:110px}
+  .orb-txt{font-size:15px}
+  .ch-ico{width:64px;height:64px;border-radius:16px}
+  .ch{padding:20px 10px 14px;border-radius:15px;gap:10px}
+  .ch-name{font-size:13px}
+  .topbar{height:38px;padding:0 10px}
+  .botbar{height:32px}
+  .cw-inner{padding:20px 14px}
+  #joe-radio{width:170px;bottom:10px;right:10px}
+  #joe-radio.collapsed{width:150px}
+}
+
+/* =============================================
+   DARK MODE
+   ============================================= */
+#screen-content.dark-mode .sky{
+  background:linear-gradient(175deg,#0a0e1a 0%,#121830 25%,#1a1e40 50%,#0f1228 75%,#080c18 100%);
+  animation:none}
+#screen-content.dark-mode .topbar{
+  background:linear-gradient(180deg,rgba(18,24,48,0.95),rgba(12,16,32,0.9));
+  border-bottom:1px solid rgba(100,140,255,0.15)}
+#screen-content.dark-mode .topbar-txt{color:#8ab4d0}
+#screen-content.dark-mode .topbar-pill{color:#7a9ab8;background:linear-gradient(180deg,rgba(40,60,100,0.6),rgba(20,30,60,0.4));border-color:rgba(100,140,255,0.15)}
+#screen-content.dark-mode .botbar{
+  background:linear-gradient(0deg,rgba(12,16,32,0.95),rgba(18,24,48,0.9));
+  border-top:1px solid rgba(100,140,255,0.15)}
+#screen-content.dark-mode .home-btn{color:#7a9ab8;background:linear-gradient(180deg,rgba(30,40,70,0.8),rgba(20,28,50,0.6));border-color:rgba(100,140,255,0.15)}
+#screen-content.dark-mode .mute-toggle{color:#7a9ab8;background:rgba(30,40,70,0.5);border-color:rgba(100,140,255,0.15)}
+#screen-content.dark-mode .ch{
+  background:linear-gradient(175deg,rgba(20,28,55,0.7),rgba(15,20,45,0.6) 50%,rgba(10,15,35,0.5));
+  border:1px solid rgba(100,140,255,0.2);
+  box-shadow:0 4px 20px rgba(0,0,0,0.3),0 1px 0 rgba(100,140,255,0.1) inset}
+#screen-content.dark-mode .ch::before{background:linear-gradient(180deg,rgba(100,140,255,0.1) 0%,transparent 60%)}
+#screen-content.dark-mode .ch:hover{
+  background:linear-gradient(175deg,rgba(30,40,70,0.8),rgba(25,35,65,0.7));
+  box-shadow:0 12px 40px rgba(0,0,0,0.4),0 0 30px rgba(80,120,255,0.1)}
+#screen-content.dark-mode .ch-name{color:#c8dae8}
+#screen-content.dark-mode .ch-sub{color:#6a8aa0}
+#screen-content.dark-mode .cw-topbar{
+  background:linear-gradient(180deg,rgba(18,24,48,0.95),rgba(12,16,32,0.9));
+  border-bottom-color:rgba(100,140,255,0.15)}
+#screen-content.dark-mode .cw-back{color:#7a9ab8;background:linear-gradient(180deg,rgba(30,40,70,0.8),rgba(20,28,50,0.6));border-color:rgba(100,140,255,0.15)}
+#screen-content.dark-mode .cw-title{color:#c8dae8}
+#screen-content.dark-mode .cw-body{background:linear-gradient(180deg,#0e1225,#111530 50%,#0d1020)}
+#screen-content.dark-mode .gc{background:rgba(20,28,55,0.6);border-color:rgba(100,140,255,0.15);
+  box-shadow:0 4px 20px rgba(0,0,0,0.3)}
+#screen-content.dark-mode .gc::before{background:linear-gradient(180deg,rgba(100,140,255,0.06),transparent)}
+#screen-content.dark-mode .pcard{background:rgba(20,28,55,0.5);border-color:rgba(100,140,255,0.12)}
+#screen-content.dark-mode .pcard:hover{background:rgba(30,40,70,0.6)}
+#screen-content.dark-mode .tag{background:linear-gradient(180deg,rgba(40,60,100,0.5),rgba(20,30,60,0.3));border-color:rgba(100,140,255,0.15);color:#a0c0d8}
+#screen-content.dark-mode .clink{background:rgba(20,28,55,0.5);border-color:rgba(100,140,255,0.12);color:#c8dae8}
+#screen-content.dark-mode .clink:hover{background:rgba(30,40,70,0.6)}
+#screen-content.dark-mode .cloud{opacity:0.08}
+#screen-content.dark-mode .mbub{opacity:0.08}
+#screen-content.dark-mode ~ .crt-bloom{box-shadow:inset 0 0 120px rgba(80,100,255,0.08)}
+.dark-toggle{width:28px;height:28px;border-radius:50%;border:1px solid rgba(0,180,216,0.15);
+  background:linear-gradient(180deg,rgba(255,255,255,0.8),rgba(186,230,253,0.3));
+  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;
+  font-size:14px;line-height:1;padding:0}
+.dark-toggle:hover{transform:scale(1.1)}
+#screen-content.dark-mode .dark-toggle{background:linear-gradient(180deg,rgba(40,60,100,0.6),rgba(20,30,60,0.4));border-color:rgba(100,140,255,0.2)}
+
+</style>
+</head>
+<body class="wii-cursor">
+
+<!-- Wii Pointer -->
+<div id="pointer">
+<svg viewBox="0 0 32 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 2L4 30L10 24L16 36L20 34L14 22L22 22L4 2Z" fill="white" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+<ellipse cx="12" cy="18" rx="10" ry="8" fill="rgba(80,180,255,0.12)"/>
+</svg>
+</div>
+
+<!-- CRT TV Frame -->
+<div id="tv-frame">
+  <div id="tv-bezel">
+    <div id="tv-screen">
+      <div class="crt-bloom"></div>
+      <div id="screen-content">
+
+        <!-- WHITE FLASH -->
+        <div id="flash"></div>
+
+        <!-- ===========================================
+             BOOT SEQUENCE
+             =========================================== -->
+        <div id="boot">
+          <div id="bbubs"></div>
+          <div id="lrays" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
+          <div class="relative z-10 flex flex-col items-center justify-center gap-7 px-6 text-center">
+            <div class="orb bhide" id="borb"><span class="orb-txt">Joe<br>Croskey</span></div>
+            <p id="btag" style="display:none"></p>
+            <p class="text-white/60 text-sm md:text-base font-light tracking-wide max-w-sm bhide" id="btag2" style="margin-top:4px">
+              Welcome to my website :)
+            </p>
+            <div class="bhide" id="benter">
+              <button class="press-a" id="enter-btn" aria-label="Enter">Enter</button>
+              <p class="text-white/30 text-[10px] mt-2 tracking-[.2em] uppercase">click to start</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===========================================
+             MAIN MENU
+             =========================================== -->
+        <div id="menu">
+          <!-- Sky BG -->
+          <div class="sky"></div>
+          <div id="clouds"></div>
+          <div id="mbubs"></div>
+
+          <!-- Top Bar -->
+          <div class="topbar">
+            <div class="topbar-logo"><div class="topbar-orb"></div><span class="topbar-txt">joe &middot; Channels</span></div>
+            <div class="topbar-right">
+              <span class="topbar-pill" id="clock"></span>
+              <!-- Fake Wii icons -->
+<button class="dark-toggle" id="dark-toggle" title="Toggle Dark Mode">&#127769;</button>
+              <div class="wii-icon" title="Wi-Fi"><svg viewBox="0 0 24 24" fill="none" stroke="#4a7a8a" stroke-width="2"><path d="M5 12.55a11 11 0 0114 0"/><path d="M8.53 16.11a6 6 0 016.95 0"/><circle cx="12" cy="20" r="1"/></svg></div>
+              <div class="wii-icon" title="Battery"><svg viewBox="0 0 24 24" fill="none" stroke="#4a7a8a" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/><rect x="4" y="9" width="4" height="6" rx="1" fill="#4a7a8a" opacity=".3"/><rect x="9" y="9" width="4" height="6" rx="1" fill="#4a7a8a" opacity=".3"/><rect x="14" y="9" width="4" height="6" rx="1" fill="#4a7a8a" opacity=".3"/></svg></div>
+            </div>
+          </div>
+
+          <!-- CHANNEL GRID -->
+          <div class="ch-grid" id="chgrid">
+            <!-- 1: About -->
+            <div class="ch" data-ch="about" tabindex="0" aria-label="About me">
+              <div class="ch-ico" style="background:none;box-shadow:none;overflow:hidden">
+                <img src="/joe.png" alt="Joe" style="width:84px;height:84px;object-fit:cover;object-position:center 20%;display:block;border-radius:20px">
+              </div>
+              <div><p class="ch-name">About Me</p></div>
+            </div>
+            <!-- 2: Projects -->
+            <div class="ch" data-ch="projects" tabindex="0" aria-label="Projects">
+              <div class="ch-ico" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+              </div>
+              <div><p class="ch-name">Projects</p></div>
+            </div>
+            <!-- 3: Music -->
+            <div class="ch" data-ch="music" tabindex="0" aria-label="Music" style="position:relative">
+              <div class="shing"><div class="shing-line"></div><div class="shing-line"></div><div class="shing-line"></div><div class="shing-flare"></div><div class="shing-ring"></div></div>
+              <div class="ch-ico" style="background:linear-gradient(135deg,#f43f5e,#be123c)">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              </div>
+              <div><p class="ch-name">Music / joe</p></div>
+            </div>
+            <!-- 4: Connect -->
+            <div class="ch" data-ch="connect" tabindex="0" aria-label="Connect">
+              <div class="ch-ico" style="background:linear-gradient(135deg,#10b981,#047857)">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div><p class="ch-name">Connect</p></div>
+            </div>
+            <!-- 5: Fun Stuff (Design Archive) -->
+            <div class="ch" data-ch="archive" tabindex="0" aria-label="Fun Stuff">
+              <div class="ch-ico" style="background:linear-gradient(135deg,#38b000,#007200)">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              </div>
+              <div><p class="ch-name">Fun Stuff</p></div>
+            </div>
+          </div>
+
+          <!-- Bottom Bar -->
+          <div class="botbar">
+            <div class="home-btn" id="home-btn">&#x1F3E0; HOME</div>
+            <div class="mute-toggle" id="mute-btn">&#x1F50A; Sound</div>
+          </div>
+        </div>
+
+        <!-- ===========================================
+             CHANNEL WINDOW (generic, content swapped via JS)
+             =========================================== -->
+        <div id="ch-window">
+          <div class="cw-topbar">
+            <div class="cw-back" id="cw-back">&#x25C0; Back</div>
+            <span class="cw-title" id="cw-title"></span>
+          </div>
+          <div class="cw-body">
+            <div class="cw-inner" id="cw-content"></div>
+          </div>
+        </div>
+
+        <!-- ===========================================
+             DESIGN ARCHIVE FULL-SCREEN FRAME
+             =========================================== -->
+        <div id="archive-frame">
+          <div class="cw-topbar">
+            <div class="cw-back" id="arc-back">&#x25C0; Back to Channels</div>
+            <span class="cw-title">Fun Stuff</span>
+          </div>
+          <!-- ==============================================
+               DESIGN ARCHIVE CONTENT
+
+               OPTION A (Current): Loads the V&A catalog
+               app via iframe from the same server.
+
+               OPTION B: Replace the iframe with your
+               standalone catalog HTML/CSS/JS.
+
+               <!-- PASTE YOUR EXISTING DESIGN CATALOG CODE HERE -->
+               ============================================== -->
+          <div style="flex:1;overflow:hidden">
+            <iframe id="arc-iframe" src="about:blank" style="width:100%;height:100%;border:none" title="Design Archive"></iframe>
+          </div>
+        </div>
+
+        <!-- FUN STUFF POPUP MENU -->
+        <div id="fun-popup">
+          <div class="fp-card">
+            <div class="fp-title">Fun Stuff</div>
+            <div class="fp-opt" data-fp-src="/gallery">
+              <div class="fp-dot" style="background:linear-gradient(135deg,#4fc3f7,#00b4d8)"></div>
+              <div class="fp-info">
+                <div class="fp-label">museum pieces</div>
+                <div class="fp-desc">iconic design objects</div>
+              </div>
+            </div>
+            <div class="fp-divider"></div>
+            <div class="fp-opt" data-fp-src="/fun/cigarettes">
+              <div class="fp-dot" style="background:linear-gradient(135deg,#ff6b6b,#ee5a24)"></div>
+              <div class="fp-info">
+                <div class="fp-label">chinese cigarettes</div>
+                <div class="fp-desc">pack art, pricing, regional brands</div>
+              </div>
+            </div>
+            <div class="fp-divider"></div>
+            <div class="fp-opt" data-fp-src="/fun/cocktails">
+              <div class="fp-dot" style="background:linear-gradient(135deg,#a29bfe,#6c5ce7)"></div>
+              <div class="fp-info">
+                <div class="fp-label">cocktails</div>
+                <div class="fp-desc">classic &amp; contemporary drinks</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /screen-content -->
+    </div><!-- /tv-screen -->
+  </div><!-- /tv-bezel -->
+</div><!-- /tv-frame -->
+
+<!-- =============================================
+     LIGHTBOX GALLERY
+     ============================================= -->
+<div id="lightbox">
+  <div id="lb-close">&times;</div>
+  <div class="lb-arrow" id="lb-prev">&#10094;</div>
+  <img id="lb-img" src="" alt="Gallery image">
+  <div class="lb-arrow" id="lb-next">&#10095;</div>
+  <div id="lb-counter"></div>
+</div>
+
+<!-- =============================================
+     JOE RADIO — Mini Playlist Widget
+     ============================================= -->
+<div id="joe-radio" class="collapsed" style="display:none">
+  <div class="radio-header" id="radio-header">
+    <div class="radio-title">
+      <div class="radio-orb" id="radio-orb"></div>
+      <span class="radio-label">joe Radio</span>
+    </div>
+    <div class="radio-vis" id="radio-vis"><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="radio-toggle" id="radio-toggle" title="Expand/Collapse">&#9660;</div>
+  </div>
+  <div class="radio-now">
+    <div class="radio-track" id="radio-track-name">LEASE!</div>
+    <div class="radio-artist" id="radio-track-artist">Takeshi Abo</div>
+  </div>
+  <div class="radio-controls">
+    <div class="radio-btn" id="radio-prev" title="Previous"><svg viewBox="0 0 16 16" fill="#3a6a7a"><path d="M3 3h2v10H3zM7 8l7-5v10z" transform="scale(-1,1) translate(-16,0)"/></svg></div>
+    <div class="radio-btn play" id="radio-play" title="Play/Pause"><svg viewBox="0 0 16 16"><polygon points="5,2 13,8 5,14"/></svg></div>
+    <div class="radio-btn" id="radio-next" title="Next"><svg viewBox="0 0 16 16" fill="#3a6a7a"><path d="M11 3h2v10h-2zM2 3l7 5-7 5z"/></svg></div>
+  </div>
+  <div class="radio-playlist" id="radio-playlist"></div>
+</div>
+
+<!-- ===========================================
+     CHANNEL CONTENT TEMPLATES (hidden, cloned into window by JS)
+     =========================================== -->
+<template id="tpl-about">
+<div class="gc mb-5">
+  <div class="flex items-center gap-4 mb-5">
+    <div class="rounded-full flex-shrink-0 overflow-hidden" style="width:80px;height:80px;margin-top:-8px;box-shadow:0 3px 14px rgba(0,180,216,0.3)">
+      <img src="/joe.png" alt="Joe" style="width:100%;height:100%;object-fit:cover;object-position:center 20%;display:block">
+    </div>
+    <div><h2 class="text-xl font-bold" style="color:#1a3a4a">Joseph Croskey</h2>
+    <p class="text-xs" style="color:#5a8a9a">Designer &middot; Musician &middot; Producer &middot; A&amp;R &middot; Viral Marketer</p></div>
+  </div>
+  <div style="border-radius:14px;overflow:hidden;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,80,140,0.1)">
+    <img src="/Croskey070800-R1-040-18A_opt.jpg" alt="Joe Croskey" loading="lazy" style="width:100%;height:auto;display:block;object-fit:cover">
+  </div>
+  <div class="space-y-3 text-[13px] leading-relaxed" style="color:#2a4a5a">
+    <p>I'm Joseph Croskey, though most people call me Joe. I'm from Detroit, and for as long as I can remember, I've been drawn to making things. Music was one of my first obsessions. I started making it when I was young, and that early fascination with sound opened the door to a much bigger world of creativity. Around the same time, I was also starting little businesses in middle school, always looking for ways to turn ideas into something real.</p>
+    <p>Since then, that same curiosity has shaped the way I move through life. I've always been passionate about art, food, technology, storytelling, and exploring the world. I do not see myself as just one thing. More than anything, I'm someone who loves learning, creating, and connecting ideas across different mediums, cultures, and experiences.</p>
+    <p>That mindset has taken me across Detroit, Shanghai, London, and beyond. I studied Interactive Media and Business at <strong>NYU Shanghai</strong>, where I developed a global perspective and deepened my interest in how creativity and technology can work together. Later, I earned a <strong>Master's degree in Music Production with Distinction from the University of the Arts London</strong>, which further shaped the way I think about sound, design, and emotional impact.</p>
+    <p>Today, I work at <strong>Intelligent Internet</strong>, where my role has grown across marketing, creative, content, growth, and cross-functional communication. Over the past year, I've helped grow the company's social media presence by more than <strong>100 percent</strong>, contributed to editing and publishing a <strong>number one Amazon bestseller</strong>, created launch videos that reached <strong>millions of views</strong>, and produced podcasts with <strong>hundreds of thousands of views</strong>. I've also worked across teams in <strong>China, Canada, Vietnam, and the UK</strong>, and being <strong>fluent in Chinese</strong> has allowed me to build genuine connections across markets and cultures.</p>
+    <p>At the core of everything I do is the same thing that has been there from the beginning: curiosity. Whether I'm making music, shaping a story, building a brand, designing something visual, or discovering a new place through its food and culture, I'm most fulfilled when I'm creating something meaningful.</p>
+  </div>
+
+  <div style="border-radius:14px;overflow:hidden;margin:20px auto 8px;max-width:75%;box-shadow:0 4px 20px rgba(0,80,140,0.1)">
+    <img src="/IMG_0744_opt.jpeg" alt="Joe Croskey" loading="lazy" style="width:100%;height:auto;display:block;object-fit:cover">
+  </div>
+
+  <!-- Career Timeline -->
+  <div class="mt-6 pt-5" style="border-top:1px solid rgba(0,180,216,0.1)">
+    <p class="text-xs text-muted uppercase tracking-wider mb-3 font-medium" style="color:#5a8a9a">Career</p>
+    <div class="space-y-3">
+      <div class="pcard">
+        <div class="flex justify-between items-start">
+          <div><h3 class="font-semibold text-sm" style="color:#1a3a4a">Marketing Specialist</h3>
+          <p class="text-[11px]" style="color:#0077b6">Intelligent Internet (ii.inc)</p></div>
+          <span class="text-[10px]" style="color:#8ab">Current</span>
+        </div>
+        <p class="text-[11px] mt-1" style="color:#5a8a9a">AI, web3, and blockchain at the bleeding edge. Grew social media 100%+. Produced viral launch content reaching millions.</p>
+      </div>
+      <div class="pcard">
+        <div class="flex justify-between items-start">
+          <div><h3 class="font-semibold text-sm" style="color:#1a3a4a">Multimedia Designer</h3>
+          <p class="text-[11px]" style="color:#0077b6">Freelance</p></div>
+          <span class="text-[10px]" style="color:#8ab">2018 &ndash; 2025 &middot; 7 yrs</span>
+        </div>
+        <p class="text-[11px] mt-1" style="color:#5a8a9a">Designed digital assets for artists and marketing teams. Created visual content for music releases, tours, and promotional events using Adobe Creative Suite.</p>
+      </div>
+      <div class="pcard">
+        <div class="flex justify-between items-start">
+          <div><h3 class="font-semibold text-sm" style="color:#1a3a4a">Producer &amp; Sound Designer</h3>
+          <p class="text-[11px]" style="color:#0077b6">Freelance</p></div>
+          <span class="text-[10px]" style="color:#8ab">2014 &ndash; 2025 &middot; 11 yrs</span>
+        </div>
+        <p class="text-[11px] mt-1" style="color:#5a8a9a">Over 1M+ total streams. Proficient in ProTools, Ableton, Logic Pro X, FL Studio. Crafted spatial audio for VR/AR projects and interactive art installations with surround sound 5.1 mixing.</p>
+      </div>
+      <div class="pcard">
+        <div class="flex justify-between items-start">
+          <div><h3 class="font-semibold text-sm" style="color:#1a3a4a">A&amp;R</h3>
+          <p class="text-[11px]" style="color:#0077b6">Freelance</p></div>
+          <span class="text-[10px]" style="color:#8ab">2014 &ndash; 2025 &middot; 11 yrs</span>
+        </div>
+        <p class="text-[11px] mt-1" style="color:#5a8a9a">Played a pivotal role in shaping the hyperpop sound. Discovered and developed artists who achieved commercial success. Facilitated cross-cultural collaborations between Western and Chinese artists.</p>
+      </div>
+      <div class="pcard">
+        <div class="flex justify-between items-start">
+          <div><h3 class="font-semibold text-sm" style="color:#1a3a4a">Creator &amp; Project Manager</h3>
+          <p class="text-[11px]" style="color:#0077b6">Fantasy Market &middot; NYU Shanghai</p></div>
+          <span class="text-[10px]" style="color:#8ab">2023 &ndash; 2024</span>
+        </div>
+        <p class="text-[11px] mt-1" style="color:#5a8a9a">Created NYU Shanghai's first collaboration with a local business. Partnered with New Bund 31 to display student art. Garnered local and international media coverage.</p>
+      </div>
+      <div class="pcard">
+        <div class="flex justify-between items-start">
+          <div><h3 class="font-semibold text-sm" style="color:#1a3a4a">Social Media Manager</h3>
+          <p class="text-[11px]" style="color:#0077b6">Freelance</p></div>
+          <span class="text-[10px]" style="color:#8ab">2014 &ndash; 2022 &middot; 8 yrs</span>
+        </div>
+        <p class="text-[11px] mt-1" style="color:#5a8a9a">Built accounts to hundreds of thousands of followers and successfully monetized them. Developed growth strategies including trend analysis, hashtag research, and engagement tactics.</p>
+      </div>
+      <div class="pcard">
+        <div class="flex justify-between items-start">
+          <div><h3 class="font-semibold text-sm" style="color:#1a3a4a">Intern, Office of the CEO</h3>
+          <p class="text-[11px]" style="color:#0077b6">Daimler AG (Mercedes-Benz)</p></div>
+          <span class="text-[10px]" style="color:#8ab">May &ndash; Aug 2019</span>
+        </div>
+        <p class="text-[11px] mt-1" style="color:#5a8a9a">Assisted in executive-level projects. Created presentations for the North American Operations Committee. Managed executive schedules and strategic plans.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-1.5 mt-5">
+    <span class="tag">Brand Strategy</span><span class="tag">Content Creation</span><span class="tag">Social Growth</span>
+    <span class="tag">UX Design</span><span class="tag">Adobe Creative Suite</span><span class="tag">Sound Design</span>
+    <span class="tag">Spatial Audio</span><span class="tag">A&amp;R</span><span class="tag">Web3</span><span class="tag">AI</span>
+    <span class="tag">ProTools</span><span class="tag">Ableton</span><span class="tag">Logic Pro X</span>
+    <span class="tag">Project Management</span><span class="tag">Chinese Fluent</span>
+  </div>
+</div>
+</template>
+
+<template id="tpl-projects">
+<div class="gc mb-4">
+  <h2 class="text-xl font-bold mb-1" style="color:#1a3a4a">Projects</h2>
+  <p class="text-[12px] mb-5" style="color:#5a8a9a;font-style:italic">"I like creating beautiful things"</p>
+
+  <div class="space-y-4">
+    <!-- numbGan -->
+    <div class="pcard">
+      <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:10px;margin-bottom:8px">
+        <iframe src="https://www.youtube.com/embed/9y-cAuVXb1U" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen title="numbGan"></iframe>
+      </div>
+      <h3 class="font-semibold text-sm" style="color:#1a3a4a">numbGan</h3>
+      <p class="text-[10px] mt-0.5" style="color:#0077b6">2022 &middot; AI + Magenta + BigGan</p>
+      <p class="text-[11px] mt-1.5" style="color:#5a8a9a">Collaborative project combining two AI applications to create audio-visual content. Melodies generated with the Max for Live device Magenta; visuals created using images from BigGan with interpolation between classes. Mix, master, and production by Jœ.</p>
+    </div>
+
+    <!-- AI Art -->
+    <div class="pcard">
+      <div class="proj-gallery" data-gallery="aiart">
+        <img src="/projects/aiart/century-avenue.png" alt="Century Avenue Shanghai">
+        <img src="/projects/aiart/cyberpunk-city.png" alt="Cyberpunk city">
+        <img src="/projects/aiart/museum-popup.png" alt="Museum pop-up">
+        <img src="/projects/aiart/garden.jpg" alt="Garden">
+        <img src="/projects/aiart/rooftop-bar.png" alt="Rooftop bar">
+        <img src="/projects/aiart/joe-portrait.jpg" alt="Portrait">
+        <img src="/projects/aiart/grid1.png" alt="AI Grid 1">
+        <img src="/projects/aiart/grid2.png" alt="AI Grid 2">
+        <img src="/projects/aiart/grid3.png" alt="AI Grid 3">
+        <img src="/projects/aiart/grid5.png" alt="AI Grid 5">
+        <img src="/projects/aiart/grid6.png" alt="AI Grid 6">
+        <img src="/projects/aiart/grid7.png" alt="AI Grid 7">
+        <img src="/projects/aiart/grid8.png" alt="AI Grid 8">
+        <img src="/projects/aiart/grid9.png" alt="AI Grid 9">
+      </div>
+      <h3 class="font-semibold text-sm" style="color:#1a3a4a">AI, Art and Their Co-Existence</h3>
+      <p class="text-[10px] mt-0.5" style="color:#0077b6">2022 &middot; Midjourney + DiscoDiffusion</p>
+      <p class="text-[11px] mt-1.5 mb-2" style="color:#5a8a9a">Exploring how machine learning expands the realm of art curation and creation. Features AI-generated cityscapes, installations, and portraits.</p>
+      <details style="cursor:pointer">
+        <summary class="text-[11px] font-medium" style="color:#0077b6">Read Full Paper &darr;</summary>
+        <div class="paper-body text-[12px] leading-relaxed mt-3" style="color:#2a4a5a">
+          <p>From teaching a program how to play checkers in the 1950s to a computer defeating a world class chess champion in 1997, it is needless to say that artificial intelligence is developing at a rate faster than anyone would have ever expected it to. While these applications of machine learning have the potential to make our lives easier, they also open up a whole other realm in the world of art curation and creation. The more advancements that we have in creating artificially "intelligent" programs, means the more possible applications they have for creative purposes. On top of that, the more data that these applications receive make them smarter over time, so the amount of possibilities for applications is endless. In this paper I will be discussing some recent advancements in artificial intelligence (GANs, CANs, and OpenAI's DALL&middot;E) and how they are being used for creative purposes.</p>
+          <p>One of the most influential recent advancements in regards to using AI to generate art are called Generative Adversarial Networks or (GANs). Introduced in 2014, GANs significantly sped up and developed the process for using machine learning to create novel outputs. The main reason why these GANs were so influential was because they were the first generative model that gave satisfying results and they also paved the way for the basis of more research in regards to the world of machine learning. GAN research director Yann LeCun even said that GANs were "the most interesting idea in the last 10 years in ML". GANs are described as "algorithmic architectures that use two neural networks, pitting one against the other (thus the 'adversarial') in order to generate new, synthetic instances of data that can pass for real data." More specifically within the two networks, there is one generator that is responsible for generating outputs, and there is a discriminator that is responsible for evaluating the data. The discriminator also checks the generated data to see if it came from the training set or not. By going through these processes, GANs are able to create images that look real, but in reality they did not even exist beforehand and are completely new. Some examples of this include, generating faces that don't exist, bedrooms, anime characters, pokemon, and even image to image translation &mdash; the possibilities are endless. One of my personal favorite applications of GANs comes from a music video by Andrew Paley where he syncs GAN generated images to the audio. Paley did this by creating a self-developed GAN powered program called Pixie that syncs the music imported to the GAN generated images to create a fluid flowing video transition between the images that also correlates perfectly with the beat and tempo of the song. This type of artistic GAN application is pretty common nowadays and with this more and more people are finding ways to improve and expand the capabilities of GANs in regards to creating collaborative audio-visual projects.</p>
+          <p>Another advancement in machine learning (surprisingly enough that was branched out directly from GANs) goes by the name CANs or Creative Adversarial Networks. Because some people believed that GANs lacked some of the creativity needed in order to create entirely new and novel outputs, programmers proposed the idea of CANs in order to compensate. CANs stem from an idea by D.E. Berlyne that "the psychophysical concept of 'arousal' has a great relevance for studying aesthetic phenomena" (Elgammal, 2017), which can also be referred to as the Martindale principle. CANs aims to raise the arousal potential of machine generated images by modifying GANs and increasing their "stylistic ambiguity" output. Another way that CANs differ from GANs is that CANs discriminator is trained over a very large dataset of art and the generator will only create images from the ones that are deemed as art from the discriminator. These improvements to GANs are valuable because CANs are attempting to create a more artistic approach to machine learning, something that is incredibly valuable for artists and creators of things. Furthermore, the development of CANs can also serve as a building block for more programs and models that are specifically designed to create new never before seen art works. In my opinion I think that the function of GANs can definitely be useful for the creation of art and novel outputs, but I do agree with the opinion that GANs are probably not the best programs for creating art. But by tweaking the GAN model slightly and developing a new model (CANs), it's probable that this model is better suited to create more artistic outputs in the long term.</p>
+          <p>Moving forward, one of the largest and most significant recent advancements in AI in regards to creating novel outputs is OpenAI's 12 billion parameter text to image network. This network is called DALL&middot;E and it works by using a large data set of text image pairs in order to generate images based upon text. On the OpenAI website they describe DALL&middot;E's capabilities as: "creating anthropomorphized versions of animals and objects, combining unrelated concepts in plausible ways, rendering text, and applying transformations to existing images." After taking a look at some of the images it produced, I was quite surprised to say the least. In the past, there was a large wave of programmers attempting to create text to image programs like DALL&middot;E, but they all ultimately ended up not working as wanted up until the introduction of Contrastive Language Image Pre Training (CLIP). CLIP was a game changer in creating a successful text to image program because it was a model that was trained upon 400 million text-image pairs that were collected from the internet. The DALL&middot;E model relies on the CLIP model to rank the results of generated images in relation to the input text. This CLIP model is also being used recently to create more open source implementations like BigSleep and DeepDaze. With this advancement I imagine that within the next couple of years there will be even more breakthroughs in regards to creating novel outputs based upon a prompt of text.</p>
+          <p>Looking at these three applications of machine learning in regards to creating art and novel outputs, it's interesting to see how each of them overlap in some ways but ultimately differ in their outputs. From the first and extremely vital advancement of the GAN model, programmers were finally able to see satisfying results. Taking the GAN model further, researchers and programmers through the CAN model looked to create something that was better suited for creating more artistic outputs. Moreover, the revolutionary development of OpenAI's DALL&middot;E that uses Contrastive Language Image Pre Training is a critical advancement because it was the first of its kind to create unbelievably accurate text-to-image outputs. Lastly, after researching and writing about these crucial advancements that each serve a vital role in the improvement and development of producing more intelligent machine learning programs, I am excited to see what the future holds in regards to AI and its relationship to art.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- Traffic -->
+    <div class="pcard">
+      <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:10px;margin-bottom:8px">
+        <iframe src="https://www.youtube.com/embed/0v5dj7VUiDw" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen title="Traffic"></iframe>
+      </div>
+      <h3 class="font-semibold text-sm" style="color:#1a3a4a">Traffic</h3>
+      <p class="text-[10px] mt-0.5" style="color:#0077b6">2022 &middot; Canon 6D + Premiere Pro</p>
+      <p class="text-[11px] mt-1.5" style="color:#5a8a9a">Juxtaposition shot on Canon 6D in Shanghai. Edited and color graded in Premiere Pro. Original soundtrack by Jœ.</p>
+    </div>
+
+    <!-- Circles -->
+    <div class="pcard">
+      <h3 class="font-semibold text-sm" style="color:#1a3a4a">Circles</h3>
+      <p class="text-[10px] mt-0.5" style="color:#0077b6">2021 &middot; Processing</p>
+      <p class="text-[11px] mt-1.5" style="color:#5a8a9a">Generative circle patterns created using Processing. Recursive visual explorations of geometry and motion.</p>
+    </div>
+
+    <!-- Sweet Mess -->
+    <div class="pcard">
+      <h3 class="font-semibold text-sm" style="color:#1a3a4a">Sweet Mess</h3>
+      <p class="text-[10px] mt-0.5" style="color:#0077b6">Visual Metaphor &middot; Collaboration with Charlie Howes</p>
+      <p class="text-[11px] mt-1.5" style="color:#5a8a9a">A visual metaphor project created in collaboration with Charlie Howes. Controlled chaos — beautiful disorder as creative expression.</p>
+    </div>
+
+    <!-- Surveillance -->
+    <div class="pcard">
+      <div class="proj-gallery" data-gallery="surveillance">
+        <img src="/projects/surveillance.jpg" alt="Surveillance diptych" style="height:140px;width:100%;object-fit:cover">
+      </div>
+      <h3 class="font-semibold text-sm" style="color:#1a3a4a">Surveillance</h3>
+      <p class="text-[10px] mt-0.5" style="color:#0077b6">2022 &middot; Photoshop + Illustrator &middot; 2540&times;3548</p>
+      <p class="text-[11px] mt-1.5" style="color:#5a8a9a">Diptych, shot in Shanghai 2022. Commentary on privacy, technology, and the omnipresent lens.</p>
+    </div>
+
+    <!-- How to Ride the Metro -->
+    <div class="pcard">
+      <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:10px;margin-bottom:8px">
+        <iframe src="https://www.youtube.com/embed/SAuijfUOPjM" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen title="How to Ride the Metro"></iframe>
+      </div>
+      <h3 class="font-semibold text-sm" style="color:#1a3a4a">How to Ride the Metro</h3>
+      <p class="text-[10px] mt-0.5" style="color:#0077b6">2022 &middot; Premiere Pro &middot; Sounds by Jœ &amp; Sovietaxi</p>
+      <p class="text-[11px] mt-1.5" style="color:#5a8a9a">Shot in Shanghai 2022. Video exploring the rhythm and ritual of navigating the city's metro system. Edited in Premiere Pro with an original soundtrack.</p>
+    </div>
+
+    <!-- Metro Advertisements -->
+    <div class="pcard">
+      <div class="proj-gallery" data-gallery="metro">
+        <img src="/projects/metro-ad.png" alt="Metro advertisement">
+        <img src="/projects/whoisjoe.jpg" alt="Who is Joe">
+        <img src="/projects/whoissevan.jpg" alt="Who is Sevan">
+        <img src="/projects/707background.jpg" alt="707 background">
+      </div>
+      <h3 class="font-semibold text-sm" style="color:#1a3a4a">Metro Advertisements for 707</h3>
+      <p class="text-[10px] mt-0.5" style="color:#0077b6">Spring 2022 &middot; Illustrator</p>
+      <p class="text-[11px] mt-1.5" style="color:#5a8a9a">Advertisements created for placement in the NYC Metro system. Designed in Illustrator for transit advertising formats.</p>
+    </div>
+
+    <!-- Gentlewoman Magazine -->
+    <div class="pcard">
+      <div class="proj-gallery" data-gallery="gentlewoman">
+        <img src="/projects/gentlewoman1.jpg" alt="Gentlewoman cover">
+        <img src="/projects/gentlewoman2.jpg" alt="Gentlewoman spread 2">
+        <img src="/projects/gentlewoman3.jpg" alt="Gentlewoman spread 3">
+        <img src="/projects/gentlewoman4.jpg" alt="Gentlewoman spread 4">
+        <img src="/projects/gentlewoman5.jpg" alt="Gentlewoman spread 5">
+        <img src="/projects/gentlewoman6.jpg" alt="Gentlewoman spread 6">
+        <img src="/projects/gentlewoman7.jpg" alt="Gentlewoman spread 7">
+        <img src="/projects/gentlewoman8.jpg" alt="Gentlewoman spread 8">
+      </div>
+      <h3 class="font-semibold text-sm" style="color:#1a3a4a">Gentlewoman Magazine</h3>
+      <p class="text-[10px] mt-0.5" style="color:#0077b6">InDesign &middot; 8 pages + covers</p>
+      <p class="text-[11px] mt-1.5" style="color:#5a8a9a">Mock Gentlewoman Magazine redesign and layout, playing around with image placement and type.</p>
+    </div>
+  </div>
+</div>
+</template>
+
+<template id="tpl-music">
+<div class="gc">
+  <div class="flex items-center gap-4 mb-5">
+    <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-white flex-shrink-0" style="background:linear-gradient(135deg,#f43f5e,#be123c);box-shadow:0 3px 14px rgba(244,63,94,0.3)">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+    </div>
+    <div><h2 class="text-xl font-bold" style="color:#1a3a4a">Music / joe</h2><p class="text-xs" style="color:#5a8a9a">7+ years &middot; Millions of plays</p></div>
+  </div>
+  <div class="space-y-3 text-[13px] leading-relaxed" style="color:#2a4a5a">
+    <p>The project and artist <strong>Jœ</strong>, which came into existence in 2022, is the culmination of over <strong>11 years of music creation</strong>, collaboration, and refinement — dating back to 2014.</p>
+    <p>The goal: to create a <strong>unique auditory universe</strong> — entirely self-produced, mixed, and mastered. With <strong>1M+ total streams</strong> across platforms, the project spans ambient soundscapes, beat-driven explorations, and vocal-forward pieces at the intersection of music and art.</p>
+    <p>Proficient in <strong>ProTools, Ableton, Logic Pro X, and FL Studio</strong>. Specialized in spatial audio mixing for VR/AR projects and interactive media art installations using surround sound 5.1.</p>
+    <p>As an <strong>A&amp;R</strong>, played a pivotal role in shaping the <strong>hyperpop sound</strong> — discovering and developing artists who achieved commercial success, and facilitating cross-cultural collaborations between Western and Chinese artists.</p>
+    <p>Trained at the <strong>University of the Arts London</strong> with a Master's in Music Production (Distinction).</p>
+  </div>
+  <div class="flex flex-wrap gap-1.5 mt-5"><span class="tag">Electronic</span><span class="tag">Hyperpop</span><span class="tag">Production</span><span class="tag">Sound Design</span><span class="tag">Spatial Audio</span><span class="tag">A&amp;R</span><span class="tag">ProTools</span><span class="tag">Ableton</span><span class="tag">Logic Pro X</span><span class="tag">FL Studio</span><span class="tag">UAL London</span></div>
+
+  <!-- SoundCloud -->
+  <div class="mt-5">
+    <p class="text-[10px] font-semibold uppercase tracking-wider mb-2" style="color:#5a8a9a">SoundCloud</p>
+    <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay"
+      src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/joecroskey&color=%234fc3f7&auto_play=false&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"
+      style="border-radius:12px;overflow:hidden"></iframe>
+  </div>
+
+  <!-- Spotify -->
+  <div class="mt-4">
+    <p class="text-[10px] font-semibold uppercase tracking-wider mb-2" style="color:#5a8a9a">Spotify</p>
+    <a href="https://open.spotify.com/search/Jo%C3%AB%20Croskey" target="_blank" rel="noopener"
+      class="flex items-center gap-3 px-4 py-3 rounded-xl"
+      style="background:linear-gradient(135deg,#1db954,#158a3e);color:#fff;text-decoration:none;box-shadow:0 4px 16px rgba(29,185,84,0.25)">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+      <div>
+        <p class="text-[12px] font-semibold">Listen on Spotify</p>
+        <p class="text-[10px] opacity-70">Search for Jœ / Joe Croskey</p>
+      </div>
+    </a>
+  </div>
+</div>
+</template>
+
+
+<template id="tpl-connect">
+<div class="gc" style="max-width:460px">
+  <h2 class="text-xl font-bold mb-2" style="color:#1a3a4a">Let's Connect</h2>
+  <p class="text-[13px] mb-5" style="color:#5a8a9a">Open to conversations about creative projects, AI, web3, and making cool things.</p>
+  <div class="space-y-3 mb-6">
+    <a href="mailto:hi@joecroskey.com" class="clink"><span class="text-lg">&#9993;</span><div><p class="font-semibold text-sm">Email</p><p class="text-[11px]" style="color:#5a8a9a">hi@joecroskey.com</p></div></a>
+    <a href="https://joecroskey.com" target="_blank" rel="noopener" class="clink"><span class="text-lg">&#127760;</span><div><p class="font-semibold text-sm">Website</p><p class="text-[11px]" style="color:#5a8a9a">joecroskey.com</p></div></a>
+    <a href="https://www.linkedin.com/in/joseph-croskey-002992190/" target="_blank" rel="noopener" class="clink"><span class="text-lg">&#128101;</span><div><p class="font-semibold text-sm">LinkedIn</p><p class="text-[11px]" style="color:#5a8a9a">Joseph Croskey</p></div></a>
+    <a href="https://instagram.com/joecroskey" target="_blank" rel="noopener" class="clink"><span class="text-lg">&#128247;</span><div><p class="font-semibold text-sm">Instagram</p><p class="text-[11px]" style="color:#5a8a9a">@joecroskey</p></div></a>
+  </div>
+
+  <!-- Contact Form -->
+  <div style="border-top:1px solid rgba(0,180,216,0.1);padding-top:20px">
+    <p class="text-xs font-semibold uppercase tracking-wider mb-4" style="color:#5a8a9a">Send a Message</p>
+    <form id="contact-form" action="https://formspree.io/f/hi@joecroskey.com" method="POST" class="space-y-3">
+      <div class="flex gap-3">
+        <div style="flex:1">
+          <input type="text" name="name" placeholder="Your name" required
+            style="width:100%;padding:10px 14px;border-radius:12px;border:1px solid rgba(0,180,216,0.15);background:rgba(255,255,255,0.6);backdrop-filter:blur(8px);font-size:12px;color:#1a3a4a;outline:none;transition:border-color .2s"
+            onfocus="this.style.borderColor='rgba(0,180,216,0.4)'" onblur="this.style.borderColor='rgba(0,180,216,0.15)'">
+        </div>
+        <div style="flex:1">
+          <input type="email" name="email" placeholder="Your email" required
+            style="width:100%;padding:10px 14px;border-radius:12px;border:1px solid rgba(0,180,216,0.15);background:rgba(255,255,255,0.6);backdrop-filter:blur(8px);font-size:12px;color:#1a3a4a;outline:none;transition:border-color .2s"
+            onfocus="this.style.borderColor='rgba(0,180,216,0.4)'" onblur="this.style.borderColor='rgba(0,180,216,0.15)'">
+        </div>
+      </div>
+      <div>
+        <textarea name="message" placeholder="What's on your mind?" required rows="4"
+          style="width:100%;padding:10px 14px;border-radius:12px;border:1px solid rgba(0,180,216,0.15);background:rgba(255,255,255,0.6);backdrop-filter:blur(8px);font-size:12px;color:#1a3a4a;outline:none;resize:vertical;transition:border-color .2s;font-family:inherit"
+          onfocus="this.style.borderColor='rgba(0,180,216,0.4)'" onblur="this.style.borderColor='rgba(0,180,216,0.15)'"></textarea>
+      </div>
+      <button type="submit" id="contact-submit"
+        style="width:100%;padding:11px;border-radius:14px;border:none;background:linear-gradient(180deg,#4fc3f7,#0077b6);color:#fff;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(0,120,180,0.25)"
+        onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px rgba(0,120,180,0.35)'"
+        onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(0,120,180,0.25)'">
+        Send Message →
+      </button>
+      <div id="contact-status" style="display:none;text-align:center;font-size:11px;padding:8px;border-radius:10px"></div>
+    </form>
+  </div>
+</div>
+<script>
+(function(){
+  const form=document.getElementById('contact-form');
+  if(!form)return;
+  form.addEventListener('submit',async function(e){
+    e.preventDefault();
+    const btn=document.getElementById('contact-submit');
+    const status=document.getElementById('contact-status');
+    btn.textContent='Sending...';btn.disabled=true;
+    try{
+      const res=await fetch(form.action,{method:'POST',body:new FormData(form),headers:{Accept:'application/json'}});
+      if(res.ok){
+        form.reset();
+        status.textContent='✓ Message sent! I\'ll get back to you soon.';
+        status.style.cssText='display:block;text-align:center;font-size:11px;padding:8px;border-radius:10px;background:rgba(56,176,0,0.1);color:#38b000;border:1px solid rgba(56,176,0,0.2)';
+        btn.textContent='Sent ✓';
+      }else{
+        throw new Error();
+      }
+    }catch{
+      status.textContent='Something went wrong. Try emailing hi@joecroskey.com directly.';
+      status.style.cssText='display:block;text-align:center;font-size:11px;padding:8px;border-radius:10px;background:rgba(244,63,94,0.08);color:#be123c;border:1px solid rgba(244,63,94,0.15)';
+      btn.textContent='Send Message →';btn.disabled=false;
+    }
+  });
+})();
+</script>
+</template>
+
+
+<script>
+(function(){
+'use strict';
+
+/* =============================================
+   AUDIO ENGINE
+   ============================================= */
+let ac=null, muted=false, ambInt=null;
+const A=()=>{if(!ac)ac=new(window.AudioContext||window.webkitAudioContext)();return ac};
+function tone(f,d,t='sine',v=.08,det=0){if(muted)return;try{const c=A(),o=c.createOscillator(),g=c.createGain();
+o.type=t;o.frequency.value=f;o.detune.value=det;g.gain.setValueAtTime(v,c.currentTime);
+g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.connect(g);g.connect(c.destination);
+o.start(c.currentTime);o.stop(c.currentTime+d)}catch(e){}}
+
+const sndHover=()=>{tone(880,.09,'sine',.05);tone(1320,.07,'sine',.025,5)};
+const sndClick=()=>{tone(660,.06,'sine',.07);setTimeout(()=>tone(990,.09,'sine',.05),30)};
+const sndOpen=()=>{[523,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,.12,'sine',.05-i*.01),i*35))};
+const sndClose=()=>{tone(784,.07,'sine',.04);setTimeout(()=>tone(523,.1,'sine',.03),45)};
+const sndBoot=()=>{[523,659,784,1047,1319].forEach((f,i)=>setTimeout(()=>tone(f,.35,'sine',.06-i*.008),i*90))};
+const sndEnter=()=>{tone(400,.25,'sine',.08);tone(800,.2,'sine',.04,40);
+  setTimeout(()=>{tone(1200,.08,'sine',.06);tone(1800,.06,'sine',.03)},120);
+  setTimeout(()=>tone(2200,.05,'sine',.025),200)};
+function startAmb(){ambInt=setInterval(()=>{if(muted)return;tone(400+Math.random()*800,.15+Math.random()*.15,'sine',.012+Math.random()*.008)},2500+Math.random()*3000)}
+function stopAmb(){clearInterval(ambInt)}
+
+/* =============================================
+   POINTER (non-touch only)
+   ============================================= */
+const ptr=document.getElementById('pointer');
+let mx=0,my=0,px=0,py=0;
+const isTouch='ontouchstart' in window;
+if(!isTouch)ptr.style.display='block';
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+// Track cursor when mouse is inside an iframe
+window.addEventListener('message',e=>{
+  if(e.data&&e.data.type==='wii-mousemove'){
+    const iframe=document.getElementById('arc-iframe');
+    if(!iframe)return;
+    const rect=iframe.getBoundingClientRect();
+    mx=e.data.x+rect.left;
+    my=e.data.y+rect.top;
+  }
+});
+(function ap(){if(!isTouch){px+=(mx-px)*.18;py+=(my-py)*.18;ptr.style.left=px+'px';ptr.style.top=py+'px'}requestAnimationFrame(ap)})();
+document.addEventListener('mouseover',e=>{if(e.target.closest('.ch,.press-a,.cw-back,.home-btn,.mute-toggle,.clink,button,a'))ptr.classList.add('active')});
+document.addEventListener('mouseout',e=>{if(e.target.closest('.ch,.press-a,.cw-back,.home-btn,.mute-toggle,.clink,button,a'))ptr.classList.remove('active')});
+
+/* =============================================
+   BOOT SEQUENCE
+   ============================================= */
+const boot=document.getElementById('boot'),menu=document.getElementById('menu'),
+  flash=document.getElementById('flash'),enterBtn=document.getElementById('enter-btn');
+
+// Create boot bubbles
+(function(){const c=document.getElementById('bbubs');for(let i=0;i<12;i++){const b=document.createElement('div');b.className='bbub';
+const s=5+Math.random()*28;b.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-duration:${7+Math.random()*14}s;animation-delay:${Math.random()*8}s`;
+c.appendChild(b)}})();
+
+// Create light rays
+(function(){const c=document.getElementById('lrays');for(let i=0;i<8;i++){const r=document.createElement('div');r.className='lray';
+r.style.cssText=`left:${8+Math.random()*84}%;height:${30+Math.random()*30}vh;transform:rotate(${-12+Math.random()*24}deg);opacity:${.2+Math.random()*.3}`;
+c.appendChild(r)}})();
+
+// Animate boot in
+setTimeout(()=>{const o=document.getElementById('borb');o.style.transition='opacity .8s ease,transform .8s ease';o.style.opacity='1';o.style.transform='scale(1)'},200);
+setTimeout(()=>{const t=document.getElementById('btag');t.style.transition='opacity .7s ease';t.style.opacity='1'},700);
+setTimeout(()=>{const t2=document.getElementById('btag2');t2.style.transition='opacity .7s ease';t2.style.opacity='1'},950);
+setTimeout(()=>{const e=document.getElementById('benter');e.style.transition='opacity .7s ease';e.style.opacity='1'},1200);
+
+// Enter click
+enterBtn.addEventListener('click',()=>{
+  sndEnter();sndClick();
+  flash.style.transition='opacity .12s ease';flash.style.opacity='1';
+  setTimeout(()=>{flash.style.transition='opacity .6s ease';flash.style.opacity='0'},150);
+  setTimeout(()=>boot.classList.add('exit'),100);
+  setTimeout(()=>{boot.style.display='none';menu.classList.add('on')},550);
+});
+
+/* =============================================
+   MENU ENVIRONMENT
+   ============================================= */
+// Clouds
+(function(){const c=document.getElementById('clouds');
+[{w:400,h:120,x:10,y:8,o:.4},{w:300,h:90,x:60,y:5,o:.3},{w:500,h:140,x:35,y:25,o:.25},{w:250,h:80,x:80,y:18,o:.35}].forEach(d=>{
+const el=document.createElement('div');el.className='cloud';
+el.style.cssText=`width:${d.w}px;height:${d.h}px;left:${d.x}%;top:${d.y}%;opacity:${d.o}`;
+c.appendChild(el)})})();
+
+// Menu bubbles
+(function(){const c=document.getElementById('mbubs');for(let i=0;i<8;i++){const b=document.createElement('div');b.className='mbub';
+const s=16+Math.random()*70;b.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*96}%;top:${Math.random()*90}%;animation-duration:${3+Math.random()*4}s;animation-delay:${Math.random()*3}s;opacity:${.15+Math.random()*.3}`;
+c.appendChild(b)}})();
+
+// Swimming fish
+(function(){
+  const fishColors=[
+    {body:'#4fc3f7',fin:'#0288d1',belly:'#b3e5fc'},
+    {body:'#f48fb1',fin:'#e91e63',belly:'#fce4ec'},
+    {body:'#ffb74d',fin:'#ef6c00',belly:'#fff3e0'},
+    {body:'#81c784',fin:'#388e3c',belly:'#e8f5e9'},
+    {body:'#ce93d8',fin:'#7b1fa2',belly:'#f3e5f5'},
+  ];
+  function makeFishSVG(c){
+    return `<svg viewBox="0 0 40 24" fill="none"><g class="fish-body"><ellipse cx="18" cy="12" rx="14" ry="8" fill="${c.body}"/><ellipse cx="14" cy="14" rx="8" ry="4" fill="${c.belly}" opacity=".4"/><path d="M32 12l8-7v14z" fill="${c.fin}" opacity=".8"/><path d="M10 4c4 2 8 0 12-2" stroke="${c.fin}" stroke-width="1.5" fill="none" opacity=".5"/><circle cx="8" cy="10" r="2" fill="#fff"/><circle cx="7.5" cy="10" r="1" fill="#1a1a2e"/></g></svg>`;
+  }
+  function spawnFish(container,cls,count){
+    for(let i=0;i<count;i++){
+      const f=document.createElement('div');
+      const c=fishColors[Math.floor(Math.random()*fishColors.length)];
+      const sz=40+Math.random()*50;
+      const goRight=Math.random()>.5;
+      f.className='fish '+cls+(goRight?' right':'');
+      f.innerHTML=makeFishSVG(c);
+      const dur=8+Math.random()*12;
+      const y=10+Math.random()*70;
+      f.style.cssText=`width:${sz}px;height:${sz*0.6}px;top:${y}%;${goRight?'left:-50px':'right:-50px'};animation-duration:${dur}s;animation-delay:${Math.random()*dur}s`;
+      if(goRight){f.style.animationName='fishSwimR'}
+      container.appendChild(f);
+    }
+  }
+  // Boot screen fish
+  spawnFish(document.getElementById('bbubs'),'boot-fish',5);
+  // Menu fish
+  spawnFish(document.getElementById('mbubs'),'menu-fish',7);
+})();
+
+// Real-time clock
+const clockEl=document.getElementById('clock');
+(function tick(){const n=new Date();clockEl.textContent=n.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' '+n.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+setTimeout(tick,10000)})();
+
+/* =============================================
+   CHANNEL INTERACTIONS
+   ============================================= */
+const chWin=document.getElementById('ch-window'),cwContent=document.getElementById('cw-content'),
+  cwTitle=document.getElementById('cw-title'),cwBack=document.getElementById('cw-back');
+const arcFrame=document.getElementById('archive-frame'),arcBack=document.getElementById('arc-back');
+const funPopup=document.getElementById('fun-popup');
+const arcIframeDirect=document.getElementById('arc-iframe');
+
+// Fun popup option clicks
+document.querySelectorAll('.fp-opt').forEach(opt=>{
+  opt.addEventListener('mouseenter',sndHover);
+  opt.addEventListener('click',function(){
+    const src=this.dataset.fpSrc;
+    if(src)arcIframeDirect.src=src;
+    funPopup.classList.remove('on');
+    setTimeout(()=>{sndOpen();arcFrame.classList.add('on')},150);
+  });
+});
+
+// Close popup on backdrop click
+funPopup.addEventListener('click',function(e){
+  if(e.target===funPopup){sndClose();funPopup.classList.remove('on')}
+});
+
+// Channel click
+document.querySelectorAll('.ch').forEach(ch=>{
+  ch.addEventListener('mouseenter',sndHover);
+  ch.addEventListener('click',function(e){
+    sndClick();
+    // Ripple
+    const r=this.getBoundingClientRect(),rip=document.createElement('div');
+    rip.className='rip';rip.style.left=(e.clientX-r.left)+'px';rip.style.top=(e.clientY-r.top)+'px';
+    this.appendChild(rip);setTimeout(()=>rip.remove(),500);
+
+    const name=this.dataset.ch;
+    if(name==='archive'){
+      // Show popup menu
+      setTimeout(()=>{sndOpen();funPopup.classList.add('on')},150);
+      return;
+    }
+    // Open channel window
+    const tpl=document.getElementById('tpl-'+name);
+    if(!tpl)return;
+    cwContent.innerHTML='';cwContent.appendChild(tpl.content.cloneNode(true));
+    cwTitle.textContent=this.querySelector('.ch-name').textContent;
+    setTimeout(()=>{sndOpen();chWin.classList.add('on');menu.classList.add('anim-paused')},150);
+  });
+  ch.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();this.click()}});
+});
+
+// Back buttons
+cwBack.addEventListener('click',()=>{sndClose();chWin.classList.remove('on');menu.classList.remove('anim-paused')});
+arcBack.addEventListener('click',()=>{sndClose();arcFrame.classList.remove('on');menu.classList.remove('anim-paused')});
+
+// HOME button
+document.getElementById('home-btn').addEventListener('click',()=>{
+  sndClose();chWin.classList.remove('on');arcFrame.classList.remove('on');funPopup.classList.remove('on');menu.classList.remove('anim-paused')});
+
+// Mute
+const muteBtn=document.getElementById('mute-btn');
+muteBtn.addEventListener('click',()=>{
+  muted=!muted;muteBtn.textContent=muted?'\u{1F507} Muted':'\u{1F50A} Sound';
+  if(muted)stopAmb();else startAmb()});
+
+// Escape key
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){sndClose();chWin.classList.remove('on');arcFrame.classList.remove('on');funPopup.classList.remove('on');menu.classList.remove('anim-paused')}});
+
+/* =============================================
+   PARALLAX on mouse (desktop only)
+   ============================================= */
+if(!isTouch){
+  const clouds=document.getElementById('clouds'),mbubs=document.getElementById('mbubs');
+  document.addEventListener('mousemove',e=>{
+    const cx=e.clientX/window.innerWidth-.5,cy=e.clientY/window.innerHeight-.5;
+    if(clouds)clouds.style.transform=`translate(${cx*-15}px,${cy*-8}px)`;
+    if(mbubs)mbubs.style.transform=`translate(${cx*8}px,${cy*5}px)`;
+  });
+}
+
+/* =============================================
+   LIGHTBOX GALLERY
+   ============================================= */
+const lightbox=document.getElementById('lightbox'),lbImg=document.getElementById('lb-img'),
+  lbClose=document.getElementById('lb-close'),lbPrev=document.getElementById('lb-prev'),
+  lbNext=document.getElementById('lb-next'),lbCounter=document.getElementById('lb-counter');
+let lbImages=[],lbIdx=0;
+
+function openLightbox(images,startIdx){
+  lbImages=images;lbIdx=startIdx||0;
+  showLbImage();lightbox.classList.add('on');
+}
+function closeLightbox(){lightbox.classList.remove('on')}
+function showLbImage(){
+  lbImg.src=lbImages[lbIdx];
+  lbCounter.textContent=(lbIdx+1)+' / '+lbImages.length;
+  lbPrev.style.display=lbImages.length>1?'flex':'none';
+  lbNext.style.display=lbImages.length>1?'flex':'none';
+}
+function lbGo(dir){lbIdx=(lbIdx+dir+lbImages.length)%lbImages.length;showLbImage()}
+
+lbClose.addEventListener('click',closeLightbox);
+lbPrev.addEventListener('click',()=>lbGo(-1));
+lbNext.addEventListener('click',()=>lbGo(1));
+lightbox.addEventListener('click',e=>{if(e.target===lightbox)closeLightbox()});
+document.addEventListener('keydown',e=>{
+  if(!lightbox.classList.contains('on'))return;
+  if(e.key==='Escape')closeLightbox();
+  if(e.key==='ArrowLeft')lbGo(-1);
+  if(e.key==='ArrowRight')lbGo(1);
+});
+
+// Attach galleries — any .proj-gallery img click opens lightbox
+document.addEventListener('click',e=>{
+  const img=e.target.closest('.proj-gallery img');
+  if(!img)return;
+  const gallery=img.closest('.proj-gallery');
+  const imgs=Array.from(gallery.querySelectorAll('img')).map(i=>i.src);
+  const idx=imgs.indexOf(img.src);
+  openLightbox(imgs,idx>=0?idx:0);
+});
+
+/* =============================================
+   FIX: Design Archive iframe — load src on open
+   ============================================= */
+
+/* =============================================
+   JOE RADIO — Synth-based mini playlist
+   ============================================= */
+const radioEl=document.getElementById('joe-radio');
+const radioPlayBtn=document.getElementById('radio-play');
+const radioPrevBtn=document.getElementById('radio-prev');
+const radioNextBtn=document.getElementById('radio-next');
+const radioToggleBtn=document.getElementById('radio-toggle');
+const radioHeaderEl=document.getElementById('radio-header');
+const radioTrackName=document.getElementById('radio-track-name');
+const radioTrackArtist=document.getElementById('radio-track-artist');
+const radioPlaylist=document.getElementById('radio-playlist');
+const radioOrb=document.getElementById('radio-orb');
+const radioVis=document.getElementById('radio-vis');
+
+const tracks=[
+  {title:'LEASE!',artist:'Takeshi Abo',dur:'3:24',src:'/audio/lease.mp3'},
+  {title:'LEASE 2024 (My Merry Way)',artist:'Takeshi Abo',dur:'3:48',src:'/audio/lease-2024.m4a'},
+  {title:'Frutiger Aero',artist:'زیک',dur:'3:10',src:'/audio/frutiger-aero.m4a'},
+  {title:'Wii Shop Channel',artist:'Nintendo',dur:'2:04',src:'/audio/wii-shop.m4a'},
+  {title:'Mii Channel Theme',artist:'Nintendo',dur:'1:58',src:'/audio/mii-channel.mp3'},
+  {title:'Coconut Mall',artist:'Nintendo',dur:'2:12',src:'/audio/coconut-mall.m4a'},
+  {title:'Aquatic Ambience',artist:'David Wise',dur:'3:40',src:'/audio/aquatic-ambience.m4a'},
+  {title:'Click Clock Wood',artist:'Grant Kirkhope',dur:'2:55',src:'/audio/click-clock-wood.m4a'}
+];
+
+// Shuffle playlist on each visit
+for(let i=tracks.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[tracks[i],tracks[j]]=[tracks[j],tracks[i]];}
+
+let radioIdx=0,radioPlaying=false,menuShown=false;
+let radioAudio=new Audio();
+radioAudio.volume=0.8;
+radioAudio.addEventListener('ended',()=>radioNext());
+
+// Build playlist items
+tracks.forEach((t,i)=>{
+  const item=document.createElement('div');
+  item.className='radio-playlist-item'+(i===0?' active':'');
+  item.innerHTML=`<span class="rpi-num">${i+1}</span><span class="rpi-title">${t.title}</span><span class="rpi-dur">${t.dur}</span>`;
+  item.addEventListener('click',()=>{loadAndPlayTrack(i)});
+  radioPlaylist.appendChild(item);
+});
+// Set initial display to first shuffled track
+radioTrackName.textContent=tracks[0].title;
+radioTrackArtist.textContent=tracks[0].artist;
+
+function selectTrack(idx){
+  radioIdx=idx;
+  const t=tracks[idx];
+  radioTrackName.textContent=t.title;
+  radioTrackArtist.textContent=t.artist;
+  radioPlaylist.querySelectorAll('.radio-playlist-item').forEach((el,i)=>{
+    el.classList.toggle('active',i===idx);
+  });
+}
+
+function loadAndPlayTrack(idx){
+  selectTrack(idx);
+  radioAudio.src=tracks[idx].src;
+  radioAudio.play().then(()=>{
+    radioPlaying=true;
+    updatePlayUI();
+  }).catch(()=>{});
+}
+
+function updatePlayUI(){
+  if(radioPlaying){
+    radioPlayBtn.innerHTML='<svg viewBox="0 0 16 16"><rect x="3" y="2" width="3.5" height="12" rx="1" fill="#fff"/><rect x="9.5" y="2" width="3.5" height="12" rx="1" fill="#fff"/></svg>';
+    radioOrb.classList.add('playing');
+    radioVis.classList.add('active');
+  }else{
+    radioPlayBtn.innerHTML='<svg viewBox="0 0 16 16"><polygon points="5,2 13,8 5,14" fill="#fff"/></svg>';
+    radioOrb.classList.remove('playing');
+    radioVis.classList.remove('active');
+  }
+}
+
+function toggleRadioPlay(){
+  if(radioPlaying){
+    radioAudio.pause();
+    radioPlaying=false;
+  }else{
+    if(!radioAudio.src||radioAudio.src===window.location.href){
+      loadAndPlayTrack(radioIdx);
+    }else{
+      radioAudio.play().then(()=>{radioPlaying=true;updatePlayUI()}).catch(()=>{});
+    }
+    radioPlaying=true;
+  }
+  updatePlayUI();
+}
+
+function radioNext(){
+  loadAndPlayTrack((radioIdx+1)%tracks.length);
+  sndClick();
+}
+function radioPrev(){
+  loadAndPlayTrack((radioIdx-1+tracks.length)%tracks.length);
+  sndClick();
+}
+
+radioPlayBtn.addEventListener('click',e=>{e.stopPropagation();sndClick();toggleRadioPlay()});
+radioNextBtn.addEventListener('click',e=>{e.stopPropagation();radioNext()});
+radioPrevBtn.addEventListener('click',e=>{e.stopPropagation();radioPrev()});
+radioToggleBtn.addEventListener('click',e=>{
+  e.stopPropagation();sndClick();
+  radioEl.classList.toggle('collapsed');
+  radioToggleBtn.textContent=radioEl.classList.contains('collapsed')?'\u25BC':'\u25B2';
+});
+[radioPlayBtn,radioNextBtn,radioPrevBtn,radioToggleBtn].forEach(el=>{
+  el.addEventListener('mouseenter',sndHover);
+});
+
+// Show radio after boot — only autoplay on first enter
+const radioShow=()=>{
+  if(!menuShown){
+    menuShown=true;
+    radioEl.style.display='';
+    radioEl.style.animation='chIn .6s ease both';
+    radioEl.style.animationDelay='.4s';
+    setTimeout(()=>loadAndPlayTrack(0),800);
+  }
+};
+
+// Hook into menu showing
+const menuObs=new MutationObserver(()=>{
+  if(menu.classList.contains('on'))radioShow();
+});
+menuObs.observe(menu,{attributes:true,attributeFilter:['class']});
+
+/* =============================================
+   ANIME EASTER EGGS
+   ============================================= */
+// 1. Random floating sparkles across the screen
+function spawnAnimeSparkle(){
+  if(!menu.classList.contains('on'))return;
+  const sp=document.createElement('div');
+  sp.className='anime-sparkle';
+  sp.style.left=Math.random()*90+5+'%';
+  sp.style.top=Math.random()*80+10+'%';
+  // Random tint
+  const hue=Math.random()*60+180; // cyan-blue range
+  sp.style.filter=`hue-rotate(${hue}deg) brightness(1.5)`;
+  sp.style.animationDuration=(2+Math.random()*2)+'s';
+  document.body.appendChild(sp);
+  setTimeout(()=>sp.remove(),4000);
+}
+setInterval(spawnAnimeSparkle,3500+Math.random()*3000);
+
+// 2. Speed lines burst on channel click
+function spawnSpeedLines(x,y){
+  const container=document.createElement('div');
+  container.className='speed-lines';
+  container.style.left=x+'px';container.style.top=y+'px';
+  const count=8+Math.floor(Math.random()*6);
+  for(let i=0;i<count;i++){
+    const line=document.createElement('div');
+    line.className='speed-line';
+    const angle=(360/count)*i+Math.random()*15;
+    line.style.transform=`rotate(${angle}deg)`;
+    line.style.animationDelay=(Math.random()*0.05)+'s';
+    line.style.opacity=0.4+Math.random()*0.6;
+    container.appendChild(line);
+  }
+  document.body.appendChild(container);
+  setTimeout(()=>container.remove(),500);
+}
+
+// Attach speed lines to channel clicks
+document.querySelectorAll('.ch').forEach(ch=>{
+  ch.addEventListener('click',function(e){
+    spawnSpeedLines(e.clientX,e.clientY);
+  });
+});
+
+// 3. Chibi float effect — after entrance animation, add gentle floating
+setTimeout(()=>{
+  document.querySelectorAll('.ch').forEach((ch,i)=>{
+    const dur=3+Math.random()*2;
+    const delay=Math.random()*2;
+    ch.style.animation=`chBob ${dur}s ease-in-out ${delay}s infinite`;
+  });
+},1500);
+
+/* =============================================
+   DARK MODE
+   ============================================= */
+const screenContent=document.getElementById('screen-content');
+const darkToggle=document.getElementById('dark-toggle');
+function setDarkMode(on){
+  if(on){screenContent.classList.add('dark-mode');darkToggle.innerHTML='&#9728;&#65039;';}
+  else{screenContent.classList.remove('dark-mode');darkToggle.innerHTML='&#127769;';}
+  try{localStorage.setItem('darkMode',on?'1':'0')}catch(e){}
+}
+darkToggle.addEventListener('click',()=>{
+  sndClick();
+  setDarkMode(!screenContent.classList.contains('dark-mode'));
+});
+// Load preference
+try{if(localStorage.getItem('darkMode')==='1')setDarkMode(true)}catch(e){}
+})();
+</script>
+</body>
+</html>
