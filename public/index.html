@@ -250,21 +250,23 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-
    CHANNEL WINDOW (opened channel view)
    ============================================= */
 #ch-window{position:absolute;inset:0;z-index:80;opacity:0;pointer-events:none;
-  display:flex;flex-direction:column;transition:opacity .4s ease;touch-action:auto}
+  transition:opacity .4s ease;touch-action:auto}
 #ch-window.on{opacity:1;pointer-events:auto}
 /* Pause heavy background animations when a channel is open to reduce lag */
 .anim-paused .fish,.anim-paused .mbub,.anim-paused .cloud,.anim-paused .sparkle,.anim-paused .ch{animation-play-state:paused!important}
-.cw-topbar{height:40px;background:linear-gradient(180deg,rgba(230,242,255,0.95),rgba(210,228,245,0.9));
+.cw-topbar{position:absolute;top:0;left:0;right:0;height:40px;z-index:10;
+  background:linear-gradient(180deg,rgba(230,242,255,0.95),rgba(210,228,245,0.9));
   border-bottom:1px solid rgba(180,200,220,0.5);display:flex;align-items:center;padding:0 12px;gap:10px;
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);flex-shrink:0;z-index:10}
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .cw-back{font-size:11px;font-weight:600;color:#2a5a6a;cursor:pointer;padding:4px 12px;border-radius:10px;
   background:linear-gradient(180deg,#fff,#e0f0fa);border:1px solid rgba(0,120,180,0.1);
   box-shadow:0 1px 3px rgba(0,60,120,0.05);transition:all .2s}
 .cw-back:hover{transform:scale(1.05)}
 .cw-title{font-size:12px;font-weight:700;color:#1a3a4a}
-.cw-body{flex:1;overflow-y:auto;overflow-y:scroll;position:relative;
+.cw-body{position:absolute;top:40px;left:0;right:0;bottom:0;
+  overflow-y:scroll!important;-webkit-overflow-scrolling:touch;touch-action:pan-y;
   background:linear-gradient(180deg,#e8f4fc,#f0faf0 50%,#e1f5fe);z-index:5;
-  will-change:scroll-position;-webkit-overflow-scrolling:touch;touch-action:pan-y;overscroll-behavior:contain}
+  overscroll-behavior:contain}
 .cw-inner{max-width:780px;margin:0 auto;padding:28px 20px}
 
 /* Content cards inside channel windows */
@@ -482,11 +484,6 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-
   .cw-inner{padding:20px 14px}
   #joe-radio{width:170px;bottom:10px;right:10px}
   #joe-radio.collapsed{width:150px}
-  /* Fix iOS touch scrolling — explicit positioning instead of flex */
-  #ch-window{display:block}
-  .cw-topbar{position:absolute;top:0;left:0;right:0;height:40px;z-index:10}
-  .cw-body{position:absolute;top:40px;left:0;right:0;bottom:0;
-    overflow-y:scroll!important;-webkit-overflow-scrolling:touch;touch-action:pan-y}
 }
 
 /* =============================================
