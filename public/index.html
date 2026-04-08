@@ -36,9 +36,6 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-
 @media(max-width:600px){
   #tv-screen::before,#tv-screen::after{display:none}
   .crt-bloom{display:none}
-  #tv-frame{padding:0;border-radius:0;box-shadow:none;border:none}
-  #tv-bezel{padding:0;border-radius:0}
-  #tv-screen{inset:0;border-radius:0}
 }
 
 /* All content lives inside the CRT screen */
@@ -472,7 +469,9 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-
    MOBILE ADJUSTMENTS
    ============================================= */
 @media(max-width:600px){
-  #tv-screen{inset:6px;border-radius:8px}
+  #tv-frame{padding:0;border-radius:0;box-shadow:none;border:none}
+  #tv-bezel{padding:0;border-radius:0}
+  #tv-screen{inset:0;border-radius:0}
   .orb{width:110px;height:110px}
   .orb-txt{font-size:15px}
   .ch-ico{width:64px;height:64px;border-radius:16px}
@@ -483,6 +482,11 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-
   .cw-inner{padding:20px 14px}
   #joe-radio{width:170px;bottom:10px;right:10px}
   #joe-radio.collapsed{width:150px}
+  /* Fix iOS touch scrolling — explicit positioning instead of flex */
+  #ch-window{display:block}
+  .cw-topbar{position:absolute;top:0;left:0;right:0;height:40px;z-index:10}
+  .cw-body{position:absolute;top:40px;left:0;right:0;bottom:0;
+    overflow-y:scroll!important;-webkit-overflow-scrolling:touch;touch-action:pan-y}
 }
 
 /* =============================================
