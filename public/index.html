@@ -11,7 +11,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;background:#000;color:#fff;user-select:none;touch-action:manipulation}
+html{height:100%;overflow:hidden;background:#000}
+body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;background:#000;color:#fff;
+  position:fixed;width:100%;touch-action:auto;overscroll-behavior:none}
 
 /* =============================================
    CRT TV FRAME — wraps the entire experience
@@ -39,13 +41,16 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-
 }
 
 /* All content lives inside the CRT screen */
-#screen-content{position:absolute;inset:0;overflow:hidden;-webkit-overflow-scrolling:touch}
+#screen-content{position:absolute;inset:0;overflow:hidden;-webkit-overflow-scrolling:touch;touch-action:auto}
+/* Apply user-select:none only to UI chrome, not scrollable content */
+.topbar,.botbar,.ch-grid,.cw-topbar,.radio-header,.radio-controls{user-select:none;-webkit-user-select:none}
 
 /* =============================================
    CUSTOM CURSOR — Wii Pointer Hand
    ============================================= */
-.wii-cursor,
-.wii-cursor *{cursor:none!important}
+@media(pointer:fine){
+  .wii-cursor,.wii-cursor *{cursor:none!important}
+}
 #pointer{position:fixed;z-index:20000;pointer-events:none;display:none;filter:drop-shadow(0 0 8px rgba(80,180,255,0.5))}
 #pointer svg{width:40px;height:48px;transition:transform 0.1s ease}
 #pointer.active svg{transform:scale(1.15) rotate(-5deg)}
@@ -172,7 +177,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-
    CHANNEL GRID
    ============================================= */
 .ch-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;padding:28px 32px;flex:1;overflow-y:auto;overflow-x:hidden;
-  position:relative;z-index:10;align-content:center;touch-action:pan-y;-webkit-overflow-scrolling:touch}
+  position:relative;z-index:10;align-content:center;touch-action:auto;-webkit-overflow-scrolling:touch}
 @media(max-width:600px){.ch-grid{gap:10px;padding:10px 14px;align-content:start}}
 
 /* Individual channel */
@@ -264,7 +269,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-
 .cw-back:hover{transform:scale(1.05)}
 .cw-title{font-size:12px;font-weight:700;color:#1a3a4a}
 .cw-body{position:absolute;top:40px;left:0;right:0;bottom:0;
-  overflow-y:scroll!important;-webkit-overflow-scrolling:touch;touch-action:pan-y;
+  overflow-y:scroll!important;-webkit-overflow-scrolling:touch;touch-action:auto;
   background:linear-gradient(180deg,#e8f4fc,#f0faf0 50%,#e1f5fe);z-index:5;
   overscroll-behavior:contain}
 .cw-inner{max-width:780px;margin:0 auto;padding:28px 20px}
