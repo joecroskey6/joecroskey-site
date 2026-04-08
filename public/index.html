@@ -1145,6 +1145,34 @@ document.addEventListener('mouseover',e=>{if(e.target.closest('.ch,.press-a,.cw-
 document.addEventListener('mouseout',e=>{if(e.target.closest('.ch,.press-a,.cw-back,.home-btn,.mute-toggle,.clink,button,a'))ptr.classList.remove('active')});
 
 /* =============================================
+   TOUCH SCROLL FIX — manual scroll for iOS
+   ============================================= */
+if(isTouch)(function(){
+  let startY=0,startScroll=0,scrollEl=null;
+  function findScroll(el){
+    while(el){
+      if(el.scrollHeight>el.clientHeight+1){
+        const s=getComputedStyle(el);
+        if(s.overflowY==='scroll'||s.overflowY==='auto')return el;
+      }
+      el=el.parentElement;
+    }
+    return null;
+  }
+  document.addEventListener('touchstart',function(e){
+    scrollEl=findScroll(e.target);
+    if(scrollEl){startY=e.touches[0].pageY;startScroll=scrollEl.scrollTop}
+  },{passive:true});
+  document.addEventListener('touchmove',function(e){
+    if(!scrollEl)return;
+    const dy=startY-e.touches[0].pageY;
+    scrollEl.scrollTop=startScroll+dy;
+    e.preventDefault();
+  },{passive:false});
+  document.addEventListener('touchend',function(){scrollEl=null},{passive:true});
+})();
+
+/* =============================================
    BOOT SEQUENCE
    ============================================= */
 const boot=document.getElementById('boot'),menu=document.getElementById('menu'),
