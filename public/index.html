@@ -473,20 +473,28 @@ body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-webki
 @keyframes speedOut{0%{height:0;opacity:1}100%{height:80px;opacity:0}}
 
 /* =============================================
-   ASCII CAM STYLES
+   ASCII CAM STYLES — full screen
    ============================================= */
-.ascii-layout{display:grid;grid-template-columns:1fr 240px;gap:16px;align-items:stretch}
-.ascii-output-wrap{position:relative;background:#000;border:1px solid rgba(0,255,100,0.25);
-  border-radius:8px;padding:12px;min-height:360px;display:flex;align-items:center;justify-content:center;
-  box-shadow:inset 0 0 40px rgba(0,255,100,0.06),0 0 20px rgba(0,255,100,0.08);overflow:hidden}
+.ascii-fullscreen{position:absolute;top:0;left:0;right:0;bottom:0;
+  background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center;z-index:6}
 .ascii-output{font-family:'Courier New','Consolas',monospace;color:#00ff88;
-  font-size:8px;line-height:1;letter-spacing:0;white-space:pre;text-align:left;
-  text-shadow:0 0 2px rgba(0,255,100,0.6);margin:0}
-.ascii-preview-wrap{position:absolute;bottom:10px;right:10px;width:140px;
+  font-size:8px;line-height:1;letter-spacing:0;white-space:pre;text-align:center;
+  text-shadow:0 0 2px rgba(0,255,100,0.6);margin:0;padding:0}
+.ascii-preview-wrap{position:absolute;bottom:20px;right:20px;width:160px;
   border:1px solid rgba(0,255,100,0.4);border-radius:6px;overflow:hidden;box-shadow:0 0 12px rgba(0,255,100,0.25);z-index:10}
 .ascii-preview-wrap video{width:100%;display:block}
-.ascii-controls{display:flex;flex-direction:column;gap:12px;padding:12px;
-  background:#050a05;border:1px solid rgba(0,255,100,0.2);border-radius:8px;font-family:'Courier New',monospace}
+/* Floating control panel */
+.ascii-panel{position:absolute;top:10px;left:10px;z-index:20;font-family:'Courier New',monospace;
+  display:flex;align-items:flex-start}
+.ascii-panel-tab{width:34px;height:34px;border-radius:6px;border:1px solid rgba(0,255,100,0.4);
+  background:rgba(10,20,10,0.85);color:#00ff88;font-size:18px;cursor:pointer;
+  box-shadow:0 0 10px rgba(0,255,100,0.2);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.ascii-panel-tab:hover{background:rgba(0,255,100,0.15)}
+.ascii-panel-body{display:none;margin-left:8px;padding:14px;min-width:240px;
+  background:rgba(5,10,5,0.92);border:1px solid rgba(0,255,100,0.3);border-radius:8px;
+  flex-direction:column;gap:10px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  box-shadow:0 0 20px rgba(0,255,100,0.15)}
+.ascii-panel.open .ascii-panel-body{display:flex}
 .ascii-btn{padding:12px 14px;background:linear-gradient(180deg,#003d1a,#001a0a);
   color:#00ff88;border:1px solid rgba(0,255,100,0.4);border-radius:6px;font-family:inherit;
   font-size:12px;font-weight:700;letter-spacing:0.08em;cursor:pointer;transition:all .2s;
@@ -521,11 +529,9 @@ body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-webki
 .ascii-switch input:checked + .ascii-switch-sl:before{transform:translateX(18px);background:#00ff88;box-shadow:0 0 6px rgba(0,255,100,0.6)}
 .ascii-error{padding:10px;background:rgba(255,77,77,0.1);border:1px solid rgba(255,77,77,0.4);
   border-radius:4px;font-size:11px;color:#ff8888;line-height:1.4;font-family:inherit}
-.ascii-footer{margin-top:auto;padding-top:8px;font-size:9px;color:#2a4a2a;text-align:center;letter-spacing:0.08em;border-top:1px solid rgba(0,255,100,0.1)}
 @media(max-width:600px){
-  .ascii-layout{grid-template-columns:1fr}
-  .ascii-output-wrap{min-height:240px}
-  .ascii-preview-wrap{width:90px}
+  .ascii-preview-wrap{width:100px;bottom:12px;right:12px}
+  .ascii-panel-body{min-width:200px;padding:10px}
 }
 
 /* =============================================
@@ -1160,54 +1166,33 @@ body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-webki
 </template>
 
 <template id="tpl-ascii">
-<div class="gc mb-5" style="background:#0a0f0a;border:1px solid rgba(0,255,100,0.2);box-shadow:0 0 30px rgba(0,255,100,0.08),inset 0 0 60px rgba(0,255,100,0.03)">
-  <div class="flex items-center gap-4 mb-4">
-    <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg,#0a0a0a,#1a3a1a);box-shadow:0 3px 14px rgba(0,255,100,0.3),inset 0 0 20px rgba(0,255,100,0.15)">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><circle cx="12" cy="14" r="4"/><path d="M9 3h6l2 4H7l2-4z"/></svg>
-    </div>
-    <div>
-      <h2 class="text-xl font-bold" style="color:#00ff88;font-family:'Courier New',monospace;letter-spacing:.08em;text-shadow:0 0 12px rgba(0,255,100,0.5)">ASCII CAM</h2>
-      <p class="text-xs" style="color:#5a8a6a;font-family:'Courier New',monospace">&gt; Real-time webcam to terminal art</p>
-    </div>
+<div class="ascii-fullscreen">
+  <pre id="ascii-output" class="ascii-output">&gt; INITIALIZING CAMERA...
+&gt; PLEASE ALLOW ACCESS</pre>
+  <video id="ascii-video" autoplay playsinline muted style="display:none"></video>
+  <canvas id="ascii-canvas" style="display:none"></canvas>
+  <div id="ascii-preview-wrap" class="ascii-preview-wrap" style="display:none">
+    <video id="ascii-preview" autoplay playsinline muted></video>
   </div>
 
-  <div class="ascii-layout">
-    <!-- ASCII output area -->
-    <div class="ascii-output-wrap">
-      <pre id="ascii-output" class="ascii-output">&gt; CAMERA STANDBY
-&gt; PRESS [START CAMERA] TO BEGIN
-
-  @%#*+=-:.
-  ░▒▓█ ░▒▓█ ░▒▓█
-
-  READY_</pre>
-      <video id="ascii-video" autoplay playsinline muted style="display:none"></video>
-      <canvas id="ascii-canvas" style="display:none"></canvas>
-      <div id="ascii-preview-wrap" class="ascii-preview-wrap" style="display:none">
-        <video id="ascii-preview" autoplay playsinline muted></video>
-      </div>
-    </div>
-
-    <!-- Control sidebar -->
-    <div class="ascii-controls">
-      <button id="ascii-toggle" class="ascii-btn">&gt; START CAMERA</button>
-
+  <!-- Floating control panel (collapsible) -->
+  <div class="ascii-panel" id="ascii-panel">
+    <button class="ascii-panel-tab" id="ascii-panel-tab" title="Settings">⚙</button>
+    <div class="ascii-panel-body">
+      <button id="ascii-toggle" class="ascii-btn">&gt; STOP CAMERA</button>
       <div class="ascii-status" id="ascii-status">
         <span class="ascii-dot"></span>
-        <span id="ascii-status-text">STANDBY</span>
+        <span id="ascii-status-text">STARTING...</span>
         <span id="ascii-fps" style="margin-left:auto"></span>
       </div>
-
       <div class="ascii-group">
-        <label class="ascii-label">RESOLUTION <span id="ascii-res-val">100</span>ch</label>
-        <input type="range" id="ascii-res" min="40" max="200" value="100" class="ascii-slider">
+        <label class="ascii-label">RESOLUTION <span id="ascii-res-val">120</span>ch</label>
+        <input type="range" id="ascii-res" min="40" max="200" value="120" class="ascii-slider">
       </div>
-
       <div class="ascii-group">
         <label class="ascii-label">FONT SIZE <span id="ascii-font-val">8</span>px</label>
         <input type="range" id="ascii-font" min="4" max="16" value="8" step="1" class="ascii-slider">
       </div>
-
       <div class="ascii-toggle-row">
         <span class="ascii-label-sm">INVERT</span>
         <label class="ascii-switch"><input type="checkbox" id="ascii-invert"><span class="ascii-switch-sl"></span></label>
@@ -1220,10 +1205,7 @@ body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-webki
         <span class="ascii-label-sm">SHOW PREVIEW</span>
         <label class="ascii-switch"><input type="checkbox" id="ascii-show-preview"><span class="ascii-switch-sl"></span></label>
       </div>
-
       <div id="ascii-error" class="ascii-error" style="display:none"></div>
-
-      <div class="ascii-footer">&gt; MADE WITH WEBCAM MAGIC ✦</div>
     </div>
   </div>
 </div>
@@ -1854,6 +1836,16 @@ function initAsciiCam(){
     if(asciiRunning)stopCam();else startCam();
     sndClick();
   });
+
+  // Panel toggle
+  const panel=document.getElementById('ascii-panel');
+  const panelTab=document.getElementById('ascii-panel-tab');
+  if(panelTab){
+    panelTab.addEventListener('click',()=>{panel.classList.toggle('open');sndClick()});
+  }
+
+  // Auto-start camera when channel opens
+  startCam();
 }
 
 })();
