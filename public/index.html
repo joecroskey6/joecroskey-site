@@ -1189,10 +1189,6 @@ body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-webki
         <label class="ascii-label">RESOLUTION <span id="ascii-res-val">120</span>ch</label>
         <input type="range" id="ascii-res" min="40" max="200" value="120" class="ascii-slider">
       </div>
-      <div class="ascii-group">
-        <label class="ascii-label">FONT SIZE <span id="ascii-font-val">8</span>px</label>
-        <input type="range" id="ascii-font" min="4" max="16" value="8" step="1" class="ascii-slider">
-      </div>
       <div class="ascii-toggle-row">
         <span class="ascii-label-sm">INVERT</span>
         <label class="ascii-switch"><input type="checkbox" id="ascii-invert"><span class="ascii-switch-sl"></span></label>
@@ -1722,8 +1718,6 @@ function initAsciiCam(){
   const toggle=document.getElementById('ascii-toggle');
   const resSlider=document.getElementById('ascii-res');
   const resVal=document.getElementById('ascii-res-val');
-  const fontSlider=document.getElementById('ascii-font');
-  const fontVal=document.getElementById('ascii-font-val');
   const invertChk=document.getElementById('ascii-invert');
   const colorChk=document.getElementById('ascii-color');
   const previewChk=document.getElementById('ascii-show-preview');
@@ -1736,16 +1730,9 @@ function initAsciiCam(){
   const ctx=canvas.getContext('2d',{willReadFrequently:true});
   let lastTime=performance.now(),frameCount=0,fps=0;
 
-  function updateFont(){
-    const sz=parseInt(fontSlider.value);
-    fontVal.textContent=sz;
-    out.style.fontSize=sz+'px';
-  }
   function updateRes(){resVal.textContent=resSlider.value}
-
-  fontSlider.addEventListener('input',updateFont);
   resSlider.addEventListener('input',updateRes);
-  updateFont();updateRes();
+  updateRes();
 
   previewChk.addEventListener('change',()=>{
     previewWrap.style.display=previewChk.checked&&asciiRunning?'block':'none';
@@ -1798,6 +1785,15 @@ function initAsciiCam(){
     // Character aspect ratio ~0.5 (taller than wide)
     const aspect=video.videoHeight/video.videoWidth;
     const rows=Math.floor(cols*aspect*0.5);
+    // Auto-fit font size to fill viewport
+    const container=out.parentElement;
+    const availW=container.clientWidth;
+    const availH=container.clientHeight;
+    // Courier char is ~0.6x font-size wide, line-height 1.0
+    const fitByW=availW/(cols*0.6);
+    const fitByH=availH/rows;
+    const autoSize=Math.floor(Math.min(fitByW,fitByH));
+    out.style.fontSize=autoSize+'px';
     canvas.width=cols;canvas.height=rows;
     ctx.drawImage(video,0,0,cols,rows);
     const img=ctx.getImageData(0,0,cols,rows).data;
