@@ -473,6 +473,62 @@ body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-webki
 @keyframes speedOut{0%{height:0;opacity:1}100%{height:80px;opacity:0}}
 
 /* =============================================
+   ASCII CAM STYLES
+   ============================================= */
+.ascii-layout{display:grid;grid-template-columns:1fr 240px;gap:16px;align-items:stretch}
+.ascii-output-wrap{position:relative;background:#000;border:1px solid rgba(0,255,100,0.25);
+  border-radius:8px;padding:12px;min-height:360px;display:flex;align-items:center;justify-content:center;
+  box-shadow:inset 0 0 40px rgba(0,255,100,0.06),0 0 20px rgba(0,255,100,0.08);overflow:hidden}
+.ascii-output{font-family:'Courier New','Consolas',monospace;color:#00ff88;
+  font-size:8px;line-height:1;letter-spacing:0;white-space:pre;text-align:left;
+  text-shadow:0 0 2px rgba(0,255,100,0.6);margin:0}
+.ascii-preview-wrap{position:absolute;bottom:10px;right:10px;width:140px;
+  border:1px solid rgba(0,255,100,0.4);border-radius:6px;overflow:hidden;box-shadow:0 0 12px rgba(0,255,100,0.25);z-index:10}
+.ascii-preview-wrap video{width:100%;display:block}
+.ascii-controls{display:flex;flex-direction:column;gap:12px;padding:12px;
+  background:#050a05;border:1px solid rgba(0,255,100,0.2);border-radius:8px;font-family:'Courier New',monospace}
+.ascii-btn{padding:12px 14px;background:linear-gradient(180deg,#003d1a,#001a0a);
+  color:#00ff88;border:1px solid rgba(0,255,100,0.4);border-radius:6px;font-family:inherit;
+  font-size:12px;font-weight:700;letter-spacing:0.08em;cursor:pointer;transition:all .2s;
+  text-shadow:0 0 6px rgba(0,255,100,0.5);box-shadow:0 0 12px rgba(0,255,100,0.15)}
+.ascii-btn:hover{background:linear-gradient(180deg,#006633,#003d1a);box-shadow:0 0 20px rgba(0,255,100,0.35)}
+.ascii-btn.on{background:linear-gradient(180deg,#4d0000,#1a0000);color:#ff4d4d;
+  border-color:rgba(255,77,77,0.4);text-shadow:0 0 6px rgba(255,77,77,0.5);box-shadow:0 0 12px rgba(255,77,77,0.2)}
+.ascii-status{display:flex;align-items:center;gap:6px;padding:6px 10px;
+  background:#000;border:1px solid rgba(0,255,100,0.2);border-radius:4px;
+  font-size:10px;color:#00ff88;letter-spacing:0.06em}
+.ascii-dot{width:6px;height:6px;border-radius:50%;background:#444;box-shadow:0 0 6px #444}
+.ascii-status.live .ascii-dot{background:#00ff88;box-shadow:0 0 8px #00ff88;animation:asciiBlink 1.2s ease-in-out infinite}
+@keyframes asciiBlink{0%,100%{opacity:1}50%{opacity:0.3}}
+.ascii-group{display:flex;flex-direction:column;gap:6px}
+.ascii-label{font-size:10px;color:#5a8a6a;letter-spacing:0.08em;font-weight:600}
+.ascii-label span{color:#00ff88}
+.ascii-label-sm{font-size:10px;color:#5a8a6a;letter-spacing:0.08em;font-weight:600;flex:1}
+.ascii-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:#1a2a1a;
+  border-radius:2px;outline:none;cursor:pointer}
+.ascii-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;
+  border-radius:50%;background:#00ff88;box-shadow:0 0 8px rgba(0,255,100,0.6);cursor:pointer;border:none}
+.ascii-slider::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#00ff88;
+  box-shadow:0 0 8px rgba(0,255,100,0.6);cursor:pointer;border:none}
+.ascii-toggle-row{display:flex;align-items:center;gap:8px}
+.ascii-switch{position:relative;display:inline-block;width:36px;height:18px;flex-shrink:0}
+.ascii-switch input{opacity:0;width:0;height:0;position:absolute}
+.ascii-switch-sl{position:absolute;inset:0;background:#1a2a1a;border:1px solid rgba(0,255,100,0.3);
+  border-radius:10px;cursor:pointer;transition:.2s}
+.ascii-switch-sl:before{content:'';position:absolute;width:12px;height:12px;left:2px;top:2px;
+  background:#5a8a6a;border-radius:50%;transition:.2s}
+.ascii-switch input:checked + .ascii-switch-sl{background:rgba(0,255,100,0.15);border-color:rgba(0,255,100,0.6)}
+.ascii-switch input:checked + .ascii-switch-sl:before{transform:translateX(18px);background:#00ff88;box-shadow:0 0 6px rgba(0,255,100,0.6)}
+.ascii-error{padding:10px;background:rgba(255,77,77,0.1);border:1px solid rgba(255,77,77,0.4);
+  border-radius:4px;font-size:11px;color:#ff8888;line-height:1.4;font-family:inherit}
+.ascii-footer{margin-top:auto;padding-top:8px;font-size:9px;color:#2a4a2a;text-align:center;letter-spacing:0.08em;border-top:1px solid rgba(0,255,100,0.1)}
+@media(max-width:600px){
+  .ascii-layout{grid-template-columns:1fr}
+  .ascii-output-wrap{min-height:240px}
+  .ascii-preview-wrap{width:90px}
+}
+
+/* =============================================
    MOBILE ADJUSTMENTS
    ============================================= */
 @media(max-width:600px){
@@ -640,6 +696,13 @@ body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-webki
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
               </div>
               <div><p class="ch-name">Fun Stuff</p></div>
+            </div>
+            <!-- 6: ASCII Cam -->
+            <div class="ch" data-ch="ascii" tabindex="0" aria-label="ASCII Cam">
+              <div class="ch-ico" style="background:linear-gradient(135deg,#0a0a0a,#1a3a1a);box-shadow:0 3px 14px rgba(0,255,100,0.3),inset 0 0 20px rgba(0,255,100,0.15)">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><circle cx="12" cy="14" r="4"/><path d="M9 3h6l2 4H7l2-4z"/></svg>
+              </div>
+              <div><p class="ch-name">ASCII Cam</p></div>
             </div>
           </div>
 
@@ -1096,6 +1159,76 @@ body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-webki
 </script>
 </template>
 
+<template id="tpl-ascii">
+<div class="gc mb-5" style="background:#0a0f0a;border:1px solid rgba(0,255,100,0.2);box-shadow:0 0 30px rgba(0,255,100,0.08),inset 0 0 60px rgba(0,255,100,0.03)">
+  <div class="flex items-center gap-4 mb-4">
+    <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg,#0a0a0a,#1a3a1a);box-shadow:0 3px 14px rgba(0,255,100,0.3),inset 0 0 20px rgba(0,255,100,0.15)">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><circle cx="12" cy="14" r="4"/><path d="M9 3h6l2 4H7l2-4z"/></svg>
+    </div>
+    <div>
+      <h2 class="text-xl font-bold" style="color:#00ff88;font-family:'Courier New',monospace;letter-spacing:.08em;text-shadow:0 0 12px rgba(0,255,100,0.5)">ASCII CAM</h2>
+      <p class="text-xs" style="color:#5a8a6a;font-family:'Courier New',monospace">&gt; Real-time webcam to terminal art</p>
+    </div>
+  </div>
+
+  <div class="ascii-layout">
+    <!-- ASCII output area -->
+    <div class="ascii-output-wrap">
+      <pre id="ascii-output" class="ascii-output">&gt; CAMERA STANDBY
+&gt; PRESS [START CAMERA] TO BEGIN
+
+  @%#*+=-:.
+  ░▒▓█ ░▒▓█ ░▒▓█
+
+  READY_</pre>
+      <video id="ascii-video" autoplay playsinline muted style="display:none"></video>
+      <canvas id="ascii-canvas" style="display:none"></canvas>
+      <div id="ascii-preview-wrap" class="ascii-preview-wrap" style="display:none">
+        <video id="ascii-preview" autoplay playsinline muted></video>
+      </div>
+    </div>
+
+    <!-- Control sidebar -->
+    <div class="ascii-controls">
+      <button id="ascii-toggle" class="ascii-btn">&gt; START CAMERA</button>
+
+      <div class="ascii-status" id="ascii-status">
+        <span class="ascii-dot"></span>
+        <span id="ascii-status-text">STANDBY</span>
+        <span id="ascii-fps" style="margin-left:auto"></span>
+      </div>
+
+      <div class="ascii-group">
+        <label class="ascii-label">RESOLUTION <span id="ascii-res-val">100</span>ch</label>
+        <input type="range" id="ascii-res" min="40" max="200" value="100" class="ascii-slider">
+      </div>
+
+      <div class="ascii-group">
+        <label class="ascii-label">FONT SIZE <span id="ascii-font-val">8</span>px</label>
+        <input type="range" id="ascii-font" min="4" max="16" value="8" step="1" class="ascii-slider">
+      </div>
+
+      <div class="ascii-toggle-row">
+        <span class="ascii-label-sm">INVERT</span>
+        <label class="ascii-switch"><input type="checkbox" id="ascii-invert"><span class="ascii-switch-sl"></span></label>
+      </div>
+      <div class="ascii-toggle-row">
+        <span class="ascii-label-sm">COLOR MODE</span>
+        <label class="ascii-switch"><input type="checkbox" id="ascii-color"><span class="ascii-switch-sl"></span></label>
+      </div>
+      <div class="ascii-toggle-row">
+        <span class="ascii-label-sm">SHOW PREVIEW</span>
+        <label class="ascii-switch"><input type="checkbox" id="ascii-show-preview"><span class="ascii-switch-sl"></span></label>
+      </div>
+
+      <div id="ascii-error" class="ascii-error" style="display:none"></div>
+
+      <div class="ascii-footer">&gt; MADE WITH WEBCAM MAGIC ✦</div>
+    </div>
+  </div>
+</div>
+</template>
+
 
 <script>
 (function(){
@@ -1302,18 +1435,21 @@ document.querySelectorAll('.ch').forEach(ch=>{
     if(!tpl)return;
     cwContent.innerHTML='';cwContent.appendChild(tpl.content.cloneNode(true));
     cwTitle.textContent=this.querySelector('.ch-name').textContent;
-    setTimeout(()=>{sndOpen();chWin.classList.add('on');menu.classList.add('anim-paused')},150);
+    setTimeout(()=>{
+      sndOpen();chWin.classList.add('on');menu.classList.add('anim-paused');
+      if(name==='ascii')setTimeout(initAsciiCam,100);
+    },150);
   });
   ch.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();this.click()}});
 });
 
 // Back buttons
-cwBack.addEventListener('click',()=>{sndClose();chWin.classList.remove('on');menu.classList.remove('anim-paused')});
+cwBack.addEventListener('click',()=>{sndClose();chWin.classList.remove('on');menu.classList.remove('anim-paused');stopAsciiCam()});
 arcBack.addEventListener('click',()=>{sndClose();arcFrame.classList.remove('on');menu.classList.remove('anim-paused')});
 
 // HOME button
 document.getElementById('home-btn').addEventListener('click',()=>{
-  sndClose();chWin.classList.remove('on');arcFrame.classList.remove('on');funPopup.classList.remove('on');menu.classList.remove('anim-paused')});
+  sndClose();chWin.classList.remove('on');arcFrame.classList.remove('on');funPopup.classList.remove('on');menu.classList.remove('anim-paused');stopAsciiCam()});
 
 // Mute
 const muteBtn=document.getElementById('mute-btn');
@@ -1322,7 +1458,7 @@ muteBtn.addEventListener('click',()=>{
   if(muted)stopAmb();else startAmb()});
 
 // Escape key
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){sndClose();chWin.classList.remove('on');arcFrame.classList.remove('on');funPopup.classList.remove('on');menu.classList.remove('anim-paused')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){sndClose();chWin.classList.remove('on');arcFrame.classList.remove('on');funPopup.classList.remove('on');menu.classList.remove('anim-paused');stopAsciiCam()}});
 
 /* =============================================
    PARALLAX on mouse (desktop only)
@@ -1582,6 +1718,144 @@ darkToggle.addEventListener('click',()=>{
 });
 // Load preference
 try{if(localStorage.getItem('darkMode')==='1')setDarkMode(true)}catch(e){}
+
+/* =============================================
+   ASCII CAM — real-time webcam to ASCII
+   ============================================= */
+let asciiStream=null,asciiRAF=null,asciiRunning=false;
+const ASCII_RAMP='@%#*+=-:. ';
+
+function stopAsciiCam(){
+  if(asciiRAF){cancelAnimationFrame(asciiRAF);asciiRAF=null}
+  if(asciiStream){asciiStream.getTracks().forEach(t=>t.stop());asciiStream=null}
+  asciiRunning=false;
+}
+
+function initAsciiCam(){
+  const out=document.getElementById('ascii-output');
+  const video=document.getElementById('ascii-video');
+  const canvas=document.getElementById('ascii-canvas');
+  const previewWrap=document.getElementById('ascii-preview-wrap');
+  const preview=document.getElementById('ascii-preview');
+  const toggle=document.getElementById('ascii-toggle');
+  const resSlider=document.getElementById('ascii-res');
+  const resVal=document.getElementById('ascii-res-val');
+  const fontSlider=document.getElementById('ascii-font');
+  const fontVal=document.getElementById('ascii-font-val');
+  const invertChk=document.getElementById('ascii-invert');
+  const colorChk=document.getElementById('ascii-color');
+  const previewChk=document.getElementById('ascii-show-preview');
+  const status=document.getElementById('ascii-status');
+  const statusText=document.getElementById('ascii-status-text');
+  const fpsEl=document.getElementById('ascii-fps');
+  const errBox=document.getElementById('ascii-error');
+  if(!out||!toggle)return;
+
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});
+  let lastTime=performance.now(),frameCount=0,fps=0;
+
+  function updateFont(){
+    const sz=parseInt(fontSlider.value);
+    fontVal.textContent=sz;
+    out.style.fontSize=sz+'px';
+  }
+  function updateRes(){resVal.textContent=resSlider.value}
+
+  fontSlider.addEventListener('input',updateFont);
+  resSlider.addEventListener('input',updateRes);
+  updateFont();updateRes();
+
+  previewChk.addEventListener('change',()=>{
+    previewWrap.style.display=previewChk.checked&&asciiRunning?'block':'none';
+  });
+
+  async function startCam(){
+    errBox.style.display='none';
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+      errBox.textContent='> ERROR: Camera API not available. Use HTTPS or localhost.';
+      errBox.style.display='block';return;
+    }
+    try{
+      statusText.textContent='REQUESTING...';
+      asciiStream=await navigator.mediaDevices.getUserMedia({video:{width:640,height:480,facingMode:'user'},audio:false});
+      video.srcObject=asciiStream;
+      preview.srcObject=asciiStream;
+      await video.play();
+      asciiRunning=true;
+      status.classList.add('live');
+      statusText.textContent='LIVE';
+      toggle.textContent='> STOP CAMERA';
+      toggle.classList.add('on');
+      if(previewChk.checked)previewWrap.style.display='block';
+      render();
+    }catch(e){
+      let msg='> ERROR: '+(e.message||'Cannot access camera');
+      if(e.name==='NotAllowedError')msg='> PERMISSION DENIED\n> Please allow camera access and try again.';
+      else if(e.name==='NotFoundError')msg='> NO CAMERA FOUND\n> Please connect a webcam.';
+      else if(e.name==='NotReadableError')msg='> CAMERA IN USE\n> Another app is using the camera.';
+      errBox.textContent=msg;errBox.style.display='block';
+      statusText.textContent='ERROR';
+      stopCam();
+    }
+  }
+
+  function stopCam(){
+    stopAsciiCam();
+    toggle.textContent='> START CAMERA';
+    toggle.classList.remove('on');
+    status.classList.remove('live');
+    statusText.textContent='STANDBY';
+    fpsEl.textContent='';
+    previewWrap.style.display='none';
+    out.innerHTML='&gt; CAMERA STOPPED\n&gt; PRESS [START CAMERA] TO RESUME\n\n  READY_';
+  }
+
+  function render(){
+    if(!asciiRunning||!video.videoWidth){asciiRAF=requestAnimationFrame(render);return}
+    const cols=parseInt(resSlider.value);
+    // Character aspect ratio ~0.5 (taller than wide)
+    const aspect=video.videoHeight/video.videoWidth;
+    const rows=Math.floor(cols*aspect*0.5);
+    canvas.width=cols;canvas.height=rows;
+    ctx.drawImage(video,0,0,cols,rows);
+    const img=ctx.getImageData(0,0,cols,rows).data;
+    const invert=invertChk.checked;
+    const color=colorChk.checked;
+    const ramp=invert?ASCII_RAMP.split('').reverse().join(''):ASCII_RAMP;
+    const rampLen=ramp.length-1;
+    let html='';
+    for(let y=0;y<rows;y++){
+      for(let x=0;x<cols;x++){
+        const i=(y*cols+x)*4;
+        const r=img[i],g=img[i+1],b=img[i+2];
+        const lum=0.299*r+0.587*g+0.114*b;
+        const char=ramp[Math.floor((lum/255)*rampLen)];
+        if(color){
+          html+='<span style="color:rgb('+r+','+g+','+b+')">'+(char===' '?'&nbsp;':char)+'</span>';
+        }else{
+          html+=char===' '?'&nbsp;':char;
+        }
+      }
+      html+='\n';
+    }
+    out.innerHTML=html;
+    // FPS
+    frameCount++;
+    const now=performance.now();
+    if(now-lastTime>=500){
+      fps=Math.round((frameCount*1000)/(now-lastTime));
+      fpsEl.textContent=fps+' FPS';
+      frameCount=0;lastTime=now;
+    }
+    asciiRAF=requestAnimationFrame(render);
+  }
+
+  toggle.addEventListener('click',()=>{
+    if(asciiRunning)stopCam();else startCam();
+    sndClick();
+  });
+}
+
 })();
 </script>
 </body>
