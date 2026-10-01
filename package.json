@@ -6,21 +6,26 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "build:aquarium": "esbuild scene/boot.js --bundle --minify --format=esm --target=es2020 --legal-comments=linked --outfile=public/aquarium.js",
+    "predev": "npm run build:aquarium",
+    "prebuild": "npm run build:aquarium"
   },
   "dependencies": {
     "framer-motion": "^12.38.0",
-    "next": "16.2.2",
+    "next": "16.3.8",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "three": "^0.186.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "esbuild": "^0.28.2",
     "eslint": "^9",
-    "eslint-config-next": "16.2.2",
+    "eslint-config-next": "16.3.8",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

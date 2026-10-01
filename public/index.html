@@ -58,46 +58,79 @@ body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-webki
 /* =============================================
    BOOT SCREEN
    ============================================= */
-#boot{position:absolute;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  background:linear-gradient(170deg,#040e18 0%,#082840 35%,#0d5575 65%,#1a90c0 100%);
-  transition:opacity 0.5s ease,transform 0.5s ease}
-#boot.exit{opacity:0;transform:scale(1.1)}
-
-/* Boot bubbles */
-.bbub{position:absolute;border-radius:50%;
-  background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.18),rgba(255,255,255,0.02));
-  border:1px solid rgba(255,255,255,0.06);animation:brise linear infinite;will-change:transform;transform:translateZ(0)}
-@keyframes brise{0%{transform:translateY(110vh) scale(.4);opacity:0}8%{opacity:.8}92%{opacity:.6}100%{transform:translateY(-10vh) scale(1);opacity:0}}
-
-/* Light rays */
-.lray{position:absolute;bottom:0;width:1.5px;background:linear-gradient(to top,transparent,rgba(255,255,255,0.03),transparent);pointer-events:none}
-
-/* Orb */
-.orb{width:260px;height:260px;border-radius:50%;position:relative;
-  background:radial-gradient(circle at 38% 32%,#6dd5fa,#00b4d8 45%,#0077b6 85%);
-  box-shadow:0 0 50px rgba(0,180,216,0.35),0 0 100px rgba(0,180,216,0.15),inset 0 -15px 30px rgba(0,0,0,0.2),inset 0 8px 25px rgba(255,255,255,0.12);
-  animation:opulse 3s ease-in-out infinite;display:flex;align-items:center;justify-content:center}
-.orb::before{content:'';position:absolute;top:10%;left:18%;width:48%;height:32%;border-radius:50%;
-  background:linear-gradient(180deg,rgba(255,255,255,0.45),transparent);filter:blur(3px)}
-.orb::after{content:'';position:absolute;bottom:15%;right:20%;width:20%;height:12%;border-radius:50%;
-  background:rgba(255,255,255,0.08);filter:blur(4px)}
-@keyframes opulse{0%,100%{box-shadow:0 0 50px rgba(0,180,216,0.35),0 0 100px rgba(0,180,216,0.15),inset 0 -15px 30px rgba(0,0,0,0.2),inset 0 8px 25px rgba(255,255,255,0.12)}
-50%{box-shadow:0 0 70px rgba(0,180,216,0.5),0 0 140px rgba(0,180,216,0.25),inset 0 -15px 30px rgba(0,0,0,0.2),inset 0 8px 25px rgba(255,255,255,0.18)}}
-
-.orb-txt{font-size:34px;font-weight:800;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,0.3);letter-spacing:-0.5px;position:relative;z-index:1;text-align:center;line-height:1.2}
-
-/* Press A button */
-.press-a{padding:14px 44px;border-radius:40px;font-size:15px;font-weight:600;letter-spacing:.5px;
-  background:linear-gradient(180deg,rgba(255,255,255,0.18),rgba(0,180,216,0.25) 50%,rgba(0,100,160,0.35));
-  border:1px solid rgba(255,255,255,0.2);color:#fff;cursor:pointer;
-  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  box-shadow:0 4px 24px rgba(0,180,216,0.2),inset 0 1px 0 rgba(255,255,255,0.25);
-  transition:all .25s ease;position:relative;overflow:hidden}
-.press-a::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;
-  background:linear-gradient(180deg,rgba(255,255,255,0.2),transparent);border-radius:40px 40px 0 0}
-.press-a:hover{background:linear-gradient(180deg,rgba(255,255,255,0.28),rgba(0,180,216,0.4) 50%,rgba(0,100,160,0.45));
-  box-shadow:0 8px 40px rgba(0,180,216,0.35),inset 0 1px 0 rgba(255,255,255,0.35);transform:translateY(-2px) scale(1.04)}
-.press-a:active{transform:scale(.97);transition-duration:.08s}
+#boot{position:absolute;inset:0;z-index:100;overflow:hidden;isolation:isolate;
+  display:flex;align-items:center;justify-content:center;color:#f0fcf6;
+  background:radial-gradient(ellipse at 49% -18%,#98e9da 0%,#1d9c9f 24%,#0a626e 51%,#063945 78%,#032631 100%);
+  transition:opacity .75s ease,transform 1.1s cubic-bezier(.16,1,.3,1)}
+#boot.exit{opacity:0;transform:scale(1.06);pointer-events:none}
+#aq-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity 1.4s ease;pointer-events:none}
+#boot.aq-ready #aq-canvas{opacity:1}
+.aq-atmosphere{position:absolute;inset:0;pointer-events:none;z-index:1;
+  background:radial-gradient(ellipse at 50% 38%,transparent 16%,rgba(0,26,36,.08) 60%,rgba(0,20,30,.3) 100%),
+    linear-gradient(180deg,rgba(2,33,40,.1),transparent 24%,transparent 75%,rgba(1,26,30,.25))}
+.aq-surface{position:absolute;inset:-35% -25% 45%;pointer-events:none;opacity:.17;
+  background:repeating-conic-gradient(from 171deg at 52% 0%,transparent 0deg 8deg,rgba(184,255,231,.5) 9deg 11deg,transparent 13deg 20deg);
+  filter:blur(18px);transform-origin:50% 0}
+.aq-ready .aq-surface{opacity:.065;animation:aq-light 18s ease-in-out infinite alternate}
+.aq-glass{position:absolute;inset:1px;z-index:4;pointer-events:none;border-radius:11px;
+  border:1px solid rgba(195,255,239,.13);box-shadow:inset 0 1px 0 rgba(216,255,246,.23),inset 0 0 60px rgba(0,34,46,.25)}
+.aq-topline{position:absolute;top:clamp(24px,4.5vh,48px);left:clamp(24px,4vw,64px);right:clamp(24px,4vw,64px);
+  display:flex;align-items:center;justify-content:flex-end;z-index:5;gap:16px}
+.aq-signature{font-size:10px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;display:flex;align-items:center;gap:12px;color:rgba(236,255,247,.83)}
+.aq-signature::before{content:'';width:7px;height:7px;border-radius:50%;background:#d3fbe6;box-shadow:0 0 14px rgba(197,255,225,.6)}
+.aq-motion{display:flex;align-items:center;gap:8px;border:0;color:rgba(229,253,243,.65);background:transparent;
+  padding:10px 0 10px 10px;font:inherit;font-size:10px;letter-spacing:.02em;cursor:pointer;transition:color .2s}
+.aq-motion[hidden]{display:none}
+.aq-motion:hover{color:#fff}
+.aq-motion-icon{width:11px;height:12px;display:flex;justify-content:center;align-items:center;gap:3px}
+.aq-motion-icon::before,.aq-motion-icon::after{content:'';width:2px;height:9px;background:currentColor}
+.aq-motion[aria-pressed="true"] .aq-motion-icon::before{width:0;height:0;background:none;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid currentColor}
+.aq-motion[aria-pressed="true"] .aq-motion-icon::after{display:none}
+.aq-copy{position:relative;z-index:3;text-align:center;padding:48px 20px 28px;transform:translateY(-2.5vh);
+  animation:aq-arrive 1.6s cubic-bezier(.16,1,.3,1) both;pointer-events:none}
+.aq-eyebrow{font-size:10px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:rgba(218,250,237,.7);margin-bottom:25px}
+.aq-title{font-size:clamp(88px,11.4vw,172px);font-weight:600;line-height:.89;letter-spacing:-.075em;margin:0 0 25px;padding-right:.065em;
+  color:#effff6;text-shadow:0 2px 1px rgba(255,255,255,.12),0 8px 40px rgba(0,30,45,.15)}
+.aq-title span{display:block}
+.aq-title span:last-child{color:#d2f5e6}
+.aq-subtitle{font-size:clamp(12px,1.05vw,14px);font-weight:400;letter-spacing:.025em;color:rgba(224,250,238,.78);line-height:1.6;margin-bottom:29px}
+.press-a{display:inline-flex;align-items:center;justify-content:center;gap:27px;min-height:52px;padding:0 28px 0 34px;
+  border-radius:100px;border:1px solid rgba(230,255,246,.55);color:#effff8;cursor:pointer;pointer-events:auto;
+  font:inherit;font-size:13px;font-weight:500;letter-spacing:.02em;
+  background:linear-gradient(180deg,rgba(229,255,241,.23),rgba(194,242,228,.08));
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 5px 30px rgba(0,27,35,.1);transition:background .25s,transform .25s,box-shadow .25s}
+.press-a svg{width:17px;height:17px;transition:transform .25s}
+.press-a:hover{transform:translateY(-3px);background:linear-gradient(180deg,rgba(229,255,241,.36),rgba(194,242,228,.14));box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 8px 35px rgba(3,24,32,.16)}
+.press-a:hover svg{transform:translateX(3px)}
+.press-a:active{transform:translateY(0) scale(.98)}
+.press-a:focus-visible,.aq-motion:focus-visible{outline:2px solid #edfff6;outline-offset:6px}
+.aq-bottomline{position:absolute;bottom:clamp(22px,4vh,44px);left:clamp(24px,4vw,64px);right:clamp(24px,4vw,64px);z-index:3;
+  display:flex;justify-content:space-between;gap:18px;font-size:10px;font-weight:400;letter-spacing:.045em;color:rgba(221,246,232,.61);pointer-events:none}
+.aq-sound-note{display:flex;align-items:center;gap:7px}
+.aq-sound-note svg{width:12px;height:12px;opacity:.7}
+@keyframes aq-arrive{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(-2.5vh)}}
+@keyframes aq-light{to{transform:rotate(-7deg) scaleX(1.12)}}
+@media(max-width:600px){
+  .aq-copy{transform:translateY(-3vh);padding-top:20px}
+  .aq-title{font-size:clamp(78px,23vw,125px);margin-bottom:24px}
+  .aq-eyebrow{font-size:9px;letter-spacing:.18em;margin-bottom:24px}
+  .aq-subtitle{font-size:12px;margin-bottom:26px}
+  .aq-topline{top:22px;left:22px;right:22px}
+  .aq-signature{font-size:9px;letter-spacing:.17em;gap:9px}
+  .aq-motion{font-size:9px}
+  .aq-bottomline{bottom:25px;left:22px;right:22px;font-size:9px;flex-direction:column;align-items:center;gap:8px}
+  .press-a{min-height:50px;padding:0 24px 0 30px}
+}
+@media(max-height:560px) and (min-width:601px){
+  .aq-copy{padding:24px 20px}.aq-title{font-size:80px;margin-bottom:14px}
+  .aq-eyebrow{margin-bottom:14px}.aq-subtitle{margin-bottom:18px}.aq-topline{top:20px}.aq-bottomline{bottom:20px}
+}
+@media(prefers-reduced-motion:reduce){
+  #boot,#aq-canvas,.press-a,.press-a svg{transition:none}
+  .aq-copy,.aq-ready .aq-surface{animation:none}
+  #boot.exit{transform:none}
+}
 
 /* White flash */
 #flash{position:absolute;inset:0;background:#fff;z-index:200;opacity:0;pointer-events:none}
@@ -144,7 +177,6 @@ body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-webki
   75%{transform:translateX(80vw) translateY(-8px)}
   100%{transform:translateX(110vw) translateY(0)}
 }
-.fish.boot-fish{opacity:.65}
 .fish.menu-fish{opacity:.55;z-index:12}
 /* Tail wiggle */
 .fish-body{animation:wiggle 1s ease-in-out infinite alternate;will-change:transform}
@@ -641,24 +673,29 @@ body{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif;-webki
         <!-- ===========================================
              BOOT SEQUENCE
              =========================================== -->
-        <div id="boot">
-          <div id="bbubs"></div>
-          <div id="lrays" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
-          <div class="relative z-10 flex flex-col items-center justify-center gap-7 px-6 text-center">
-            <div class="orb bhide" id="borb"><span class="orb-txt">Hello<br>There</span></div>
-            <p id="btag" style="display:none"></p>
-            <p id="btag2" style="display:none"></p>
-            <div class="bhide" id="benter">
-              <button class="press-a" id="enter-btn" aria-label="Enter">Enter</button>
-              <p class="text-white/30 text-[10px] mt-2 tracking-[.2em] uppercase">click to start</p>
-            </div>
+        <section id="boot" aria-label="Welcome to Joe Croskey's website">
+          <canvas id="aq-canvas" aria-hidden="true"></canvas>
+          <div class="aq-surface" aria-hidden="true"></div>
+          <div class="aq-atmosphere" aria-hidden="true"></div>
+          <div class="aq-glass" aria-hidden="true"></div>
+          <div class="aq-topline">
+            <button class="aq-motion" id="aq-motion" type="button" aria-pressed="false" hidden>
+              <span class="aq-motion-icon" aria-hidden="true"></span><span id="aq-motion-label">Pause scene</span>
+            </button>
           </div>
-        </div>
+          <div class="aq-copy">
+            <h1 class="aq-title"><span>Hello</span><span>There</span></h1>
+            <p class="aq-subtitle">Good to have you here.</p>
+            <button class="press-a" id="enter-btn" type="button" aria-label="Enter Joe's website">
+              Enter <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+            </button>
+          </div>
+        </section>
 
         <!-- ===========================================
              MAIN MENU
              =========================================== -->
-        <div id="menu">
+        <div id="menu" inert>
           <!-- Sky BG -->
           <div class="sky"></div>
           <div id="clouds"></div>
@@ -1341,29 +1378,23 @@ if(isTouch)(function(){
 const boot=document.getElementById('boot'),menu=document.getElementById('menu'),
   flash=document.getElementById('flash'),enterBtn=document.getElementById('enter-btn');
 
-// Create boot bubbles
-(function(){const c=document.getElementById('bbubs');for(let i=0;i<12;i++){const b=document.createElement('div');b.className='bbub';
-const s=5+Math.random()*28;b.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-duration:${7+Math.random()*14}s;animation-delay:${Math.random()*8}s`;
-c.appendChild(b)}})();
-
-// Create light rays
-(function(){const c=document.getElementById('lrays');for(let i=0;i<8;i++){const r=document.createElement('div');r.className='lray';
-r.style.cssText=`left:${8+Math.random()*84}%;height:${30+Math.random()*30}vh;transform:rotate(${-12+Math.random()*24}deg);opacity:${.2+Math.random()*.3}`;
-c.appendChild(r)}})();
-
-// Animate boot in
-setTimeout(()=>{const o=document.getElementById('borb');o.style.transition='opacity .8s ease,transform .8s ease';o.style.opacity='1';o.style.transform='scale(1)'},200);
-setTimeout(()=>{const t=document.getElementById('btag');t.style.transition='opacity .7s ease';t.style.opacity='1'},700);
-setTimeout(()=>{const t2=document.getElementById('btag2');t2.style.transition='opacity .7s ease';t2.style.opacity='1'},950);
-setTimeout(()=>{const e=document.getElementById('benter');e.style.transition='opacity .7s ease';e.style.opacity='1'},1200);
-
-// Enter click
+// Keep entry available while the decorative scene loads, including without WebGL.
+let entering=false;
 enterBtn.addEventListener('click',()=>{
+  if(entering)return;
+  entering=true;
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   sndEnter();sndClick();
-  flash.style.transition='opacity .12s ease';flash.style.opacity='1';
-  setTimeout(()=>{flash.style.transition='opacity .6s ease';flash.style.opacity='0'},150);
-  setTimeout(()=>boot.classList.add('exit'),100);
-  setTimeout(()=>{boot.style.display='none';menu.classList.add('on')},550);
+  boot.dispatchEvent(new Event('aquarium:leave'));
+  boot.inert=true;
+  boot.classList.add('exit');
+  setTimeout(()=>{
+    boot.dispatchEvent(new Event('aquarium:exit'));
+    boot.style.display='none';
+    menu.inert=false;
+    menu.classList.add('on');
+    menu.querySelector('.ch')?.focus({preventScroll:true});
+  },reduced?0:700);
 });
 
 /* =============================================
@@ -1408,8 +1439,6 @@ c.appendChild(b)}})();
       container.appendChild(f);
     }
   }
-  // Boot screen fish
-  spawnFish(document.getElementById('bbubs'),'boot-fish',5);
   // Menu fish
   spawnFish(document.getElementById('mbubs'),'menu-fish',7);
 })();
@@ -1898,5 +1927,6 @@ function initAsciiCam(){
 
 })();
 </script>
+<script type="module" src="/aquarium.js"></script>
 </body>
 </html>

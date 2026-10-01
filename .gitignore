@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Generated aquarium bundle (rebuilt by predev and prebuild)
+/public/aquarium.js
+/public/aquarium.js.LEGAL.txt
